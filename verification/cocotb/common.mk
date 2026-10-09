@@ -43,7 +43,7 @@ $(info From common.mk, CURDIR is $(CURDIR))
 # Set pythonpath so that tests can access common modules
 export PYTHONPATH := $(PYTHONPATH):$(CURDIR)/common
 
-# Add empty file to common sources to enforce configuration build before running the tests
+# Compile the selected configuration first and retain it with each build.
 COMMON_SOURCES += $(TEST_DIR)/sim_build/i3c_config.vh
 
 $(info VERILOG_SOURCES = $(VERILOG_SOURCES))
@@ -77,6 +77,9 @@ ifeq ($(SIM), verilator)
     endif
     EXTRA_ARGS += $(VERILATOR_COVERAGE)
     EXTRA_ARGS += -Wno-DECLFILENAME -Wno-TIMESCALEMOD
+else
+    # Verilator 5.024 does not support all I3C/Caliptra assertion syntax.
+    COMPILE_ARGS += +define+CLP_ASSERT_ON
 endif
 
 ifeq ($(SIM), vcs)
@@ -127,7 +130,17 @@ ifneq ($(COVERAGE_TYPE),)
     endif
 endif
 
+CUSTOM_COMPILE_DEPS += $(I3C_ROOT_DIR)/verification/cocotb/common.mk $(TEST_DIR)/Makefile
+CUSTOM_COMPILE_DEPS += $(I3C_ROOT_DIR)/src/i3c_defines.svh
+CUSTOM_COMPILE_DEPS += $(I3C_ROOT_DIR)/src/csr/I3CCSR.sv $(I3C_ROOT_DIR)/src/csr/I3CCSR_pkg.sv
+CUSTOM_COMPILE_DEPS += $(SIM_BUILD)/i3c_build_config.txt
+
 include $(shell cocotb-config --makefiles)/Makefile.sim
+
+export I3C_BUILD_FLAGS := $(COMPILE_ARGS)
+export I3C_BUILD_EXTRA_FLAGS = $(EXTRA_ARGS)
+export I3C_BUILD_SIM = $(SIM)
+export I3C_BUILD_TOPLEVEL = $(TOPLEVEL)
 
 ifeq ($(SIM), vcs)
 
@@ -154,11 +167,32 @@ endif
 endif
 
 CFG_FILE ?= $(I3C_ROOT_DIR)/i3c_core_configs.yaml## Path: YAML file holding configuration of the I3C RTL
-CFG_NAME ?= axi## Valid configuration name from the YAML configuration file
+CFG_NAME ?= axi_bypass## AXI integration profile; AHB benches override this explicitly
 
-$(TEST_DIR)/sim_build/i3c_config.vh:
-	pushd $(I3C_ROOT_DIR) && CFG_FILE=$(CFG_FILE) CFG_NAME=$(CFG_NAME) make config && popd
-	mkdir -p $(TEST_DIR)/sim_build
-	touch $(TEST_DIR)/sim_build/i3c_config.vh
+.PHONY: force-i3c-config-check
+force-i3c-config-check:
+
+$(TEST_DIR)/sim_build/i3c_config.vh: force-i3c-config-check
+	@mkdir -p $(TEST_DIR)/sim_build $(SIM_BUILD)
+	@$(PYTHON_BIN) $(I3C_ROOT_DIR)/tools/i3c_config/i3c_core_config.py $(CFG_NAME) $(CFG_FILE) svh_file --output-file $@.expected
+	@if ! cmp -s $@.expected $(I3C_ROOT_DIR)/src/i3c_defines.svh || \
+	    [ ! -f $(I3C_ROOT_DIR)/src/csr/I3CCSR.sv ] || \
+	    [ ! -f $(I3C_ROOT_DIR)/src/csr/I3CCSR_pkg.sv ] || \
+	    [ $(I3C_ROOT_DIR)/src/rdl/registers.rdl -nt $(I3C_ROOT_DIR)/src/csr/I3CCSR.sv ]; then \
+	    $(MAKE) -C $(I3C_ROOT_DIR) config CFG_FILE=$(CFG_FILE) CFG_NAME=$(CFG_NAME); \
+	fi
+	@cmp $@.expected $(I3C_ROOT_DIR)/src/i3c_defines.svh
+	@if ! cmp -s $@.expected $@; then cp $@.expected $@; fi
+	@if ! cmp -s $@ $(SIM_BUILD)/i3c_defines.svh; then cp $@ $(SIM_BUILD)/i3c_defines.svh; fi
+	@$(PYTHON_BIN) -c 'import os, sys; print("CFG_NAME=" + sys.argv[1]); print("CFG_FILE=" + sys.argv[2]); print("SIM=" + os.environ["I3C_BUILD_SIM"]); print("TOPLEVEL=" + os.environ["I3C_BUILD_TOPLEVEL"]); print("COMPILE_ARGS=" + os.environ["I3C_BUILD_FLAGS"]); print("EXTRA_ARGS=" + os.environ["I3C_BUILD_EXTRA_FLAGS"])' "$(CFG_NAME)" "$(abspath $(CFG_FILE))" > $(SIM_BUILD)/i3c_build_config.txt.expected
+	@if ! cmp -s $(SIM_BUILD)/i3c_build_config.txt.expected $(SIM_BUILD)/i3c_build_config.txt; then mv $(SIM_BUILD)/i3c_build_config.txt.expected $(SIM_BUILD)/i3c_build_config.txt; else rm -f $(SIM_BUILD)/i3c_build_config.txt.expected; fi
+	@cat $(SIM_BUILD)/i3c_build_config.txt $(SIM_BUILD)/i3c_defines.svh
+	@rm -f $@.expected
+
+$(SIM_BUILD)/i3c_build_config.txt: $(TEST_DIR)/sim_build/i3c_config.vh
+	@test -f $@
+
+$(I3C_ROOT_DIR)/src/i3c_defines.svh $(I3C_ROOT_DIR)/src/csr/I3CCSR.sv $(I3C_ROOT_DIR)/src/csr/I3CCSR_pkg.sv: | $(TEST_DIR)/sim_build/i3c_config.vh
+	@test -f $@
 
 endif # CLUSTER

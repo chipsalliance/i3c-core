@@ -6,12 +6,12 @@
       name: bus_monitor_hdr_exit
       desc:
         '''
-        Verifies that the i3c_bus_monitor module correctly detects HDR
-        exit pattern. Sends the HDR exit pattern and verifies that the
-        module does not react - initially the bus is in SDR mode. Instructs
-        the module that the bus has entered HDR mode, issues the HDR exit
-        pattern and counts the number of times the module reported HDR
-        exit. Checks if it reported exactly one HDR exit event.
+        Sends an HDR exit pattern in SDR and HDR modes at two starting
+        phases away from sampling-clock edges. Requires zero exit events
+        in SDR and exactly one rising exit event in HDR, checking both the
+        pattern detector and combined output. Initializes timeout controls
+        with timeout disabled and a nonzero threshold, rejects X/Z outputs,
+        and verifies the timeout comparator did not supply the exit.
         '''
       tests: ["bus_monitor_hdr_exit"]
       tags: ["i3c_bus_monitor"]

@@ -18,6 +18,7 @@ CFG_NAME     = ahb
 
 VERILOG_SOURCES  = \
     $(CALIPTRA_ROOT)/src/libs/rtl/ahb_defines_pkg.sv \
+    $(CALIPTRA_ROOT)/src/libs/rtl/ahb_slv_sif.sv \
     $(SRC_DIR)/csr/I3CCSR_pkg.sv \
     $(SRC_DIR)/csr/I3CCSR.sv \
     $(SRC_DIR)/hci/ahb_if.sv \

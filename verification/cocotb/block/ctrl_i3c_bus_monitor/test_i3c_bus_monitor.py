@@ -6,7 +6,7 @@ from cocotbext_i3c.i3c_controller import I3cController
 import cocotb
 from cocotb.clock import Clock
 from cocotb.handle import SimHandleBase
-from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge
+from cocotb.triggers import ClockCycles, FallingEdge, ReadOnly, RisingEdge, Timer
 
 
 async def setup(dut):
@@ -20,19 +20,27 @@ async def setup(dut):
     dut.t_r_i.value = 0x02
     dut.t_f_i.value = 0x02
     dut.is_in_hdr_mode_i.value = 0
+    dut.is_in_hdr_err_mode_i.value = 0
+    dut.hdr_timeout_en_i.value = 0
+    # A zero threshold would assert the ungated timeout comparator at reset.
+    dut.t_hdr_timeout_i.value = 30000
     await ClockCycles(dut.clk_i, 10)
 
 
-async def count_high_cycles(clk, sig, e_terminate):
+async def count_high_cycles(clk, sig, e_terminate, *, rising_edges=False):
     """
-    Counts number of clock cycles during which the signal was HIGH
+    Count asserted cycles, or rising edges when a detection spans multiple cycles.
     """
     num_det = 0
+    previous = 0
     while not e_terminate.is_set():
         await RisingEdge(clk)
         await ReadOnly()
-        if sig.value:
+        assert sig.value.is_resolvable, f"{sig._name} contains X/Z"
+        value = int(sig.value)
+        if value and (not rising_edges or not previous):
             num_det += 1
+        previous = value
     return num_det
 
 
@@ -56,15 +64,7 @@ async def test_bus_monitor_hdr_exit(dut: SimHandleBase):
     cocotb.log.setLevel("INFO")
     clk = dut.clk_i
     rst_n = dut.rst_ni
-    e_terminate = cocotb.triggers.Event()
-
-    i3c_controller = I3cController(
-        sda_i=None,
-        sda_o=dut.sda_i,
-        scl_i=None,
-        scl_o=dut.scl_i,
-        speed=12.5e6,
-    )
+    i3c_controller = create_default_controller(dut)
 
     clock = Clock(clk, 2, units="ns")
     cocotb.start_soon(clock.start())
@@ -72,26 +72,29 @@ async def test_bus_monitor_hdr_exit(dut: SimHandleBase):
     await setup(dut)
     await reset_n(clk, rst_n, cycles=5)
 
-    # Start monitoring after reset to avoid X values
-    t_detect_hdr_exit = cocotb.start_soon(
-        count_high_cycles(clk, dut.hdr_exit_detect_o, e_terminate)
-    )
-
-    dut.enable_i.value = 1
-    # initially, the core is in SDR mode, so sending the first
-    # HDR exit should not trigger the exit event
-    await i3c_controller.send_hdr_exit()
-    await RisingEdge(clk)
-    # enter hdr mode and send the exit pattern again
-    dut.is_in_hdr_mode_i.value = 1
-    await i3c_controller.send_hdr_exit()
-    await ClockCycles(clk, 10)
-    e_terminate.set()
-    await RisingEdge(clk)
-    num_detects = t_detect_hdr_exit.result()
-    cocotb.log.info(f"HDR exits detected {num_detects}")
-    assert num_detects >= 1
-    e_terminate.clear()
+    for phase_ns in (0.25, 1.25):
+        for in_hdr in (0, 1):
+            await FallingEdge(clk)
+            dut.enable_i.value = 1
+            dut.is_in_hdr_mode_i.value = in_hdr
+            e_terminate = cocotb.triggers.Event()
+            t_detect_hdr_exit = cocotb.start_soon(
+                count_high_cycles(clk, dut.hdr_exit_detect_o, e_terminate, rising_edges=True)
+            )
+            t_detect_pattern = cocotb.start_soon(
+                count_high_cycles(clk, dut.xi3c_monitor.hdr_exit_pattern_detect, e_terminate, rising_edges=True)
+            )
+            # Keep the BFM's 40 ns transitions away from the 2 ns sampling-clock edges.
+            await Timer(phase_ns, units="ns")
+            await i3c_controller.send_hdr_exit()
+            await ClockCycles(clk, 10)
+            e_terminate.set()
+            num_detects = await t_detect_hdr_exit
+            num_patterns = await t_detect_pattern
+            cocotb.log.info(f"HDR exit: phase={phase_ns}ns, in_hdr={in_hdr}, output_events={num_detects}, pattern_events={num_patterns}")
+            assert num_detects == in_hdr, "Expected no SDR exit and exactly one HDR exit"
+            assert num_patterns == in_hdr, "Exit must come from the pattern detector"
+            assert int(dut.xi3c_monitor.hdr_timeout_reached.value) == 0, "Timeout masked pattern detection"
 
 
 @cocotb.test()
@@ -118,9 +121,7 @@ async def test_target_reset_detection(dut: SimHandleBase):
 
     await ClockCycles(dut.clk_i, 32)
     e_terminate.set()
-    await RisingEdge(dut.clk_i)
-
-    num_resets = t_detect_target_reset.result()
+    num_resets = await t_detect_target_reset
     cocotb.log.info(f"Resets detected: {num_resets}")
     assert num_resets == 1
 

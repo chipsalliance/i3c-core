@@ -6,67 +6,67 @@ package I3CCSR_pkg;
     localparam I3CCSR_DATA_WIDTH = 32;
     localparam I3CCSR_MIN_ADDR_WIDTH = 12;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3CBase__HC_CONTROL__RESUME__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3CBase__HC_CONTROL__BUS_ENABLE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__HC_CONTROL__RESUME__in_t RESUME;
         I3CCSR__I3CBase__HC_CONTROL__BUS_ENABLE__in_t BUS_ENABLE;
     } I3CCSR__I3CBase__HC_CONTROL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [6:0] next;
         logic we;
     } I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR__DYNAMIC_ADDR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR__DYNAMIC_ADDR_VALID__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR__DYNAMIC_ADDR__in_t DYNAMIC_ADDR;
         I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR__DYNAMIC_ADDR_VALID__in_t DYNAMIC_ADDR_VALID;
     } I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3CBase__RESET_CONTROL__SOFT_RST__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3CBase__RESET_CONTROL__CMD_QUEUE_RST__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3CBase__RESET_CONTROL__RESP_QUEUE_RST__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3CBase__RESET_CONTROL__TX_FIFO_RST__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3CBase__RESET_CONTROL__RX_FIFO_RST__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3CBase__RESET_CONTROL__IBI_QUEUE_RST__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__RESET_CONTROL__SOFT_RST__in_t SOFT_RST;
         I3CCSR__I3CBase__RESET_CONTROL__CMD_QUEUE_RST__in_t CMD_QUEUE_RST;
         I3CCSR__I3CBase__RESET_CONTROL__RESP_QUEUE_RST__in_t RESP_QUEUE_RST;
@@ -75,35 +75,35 @@ package I3CCSR_pkg;
         I3CCSR__I3CBase__RESET_CONTROL__IBI_QUEUE_RST__in_t IBI_QUEUE_RST;
     } I3CCSR__I3CBase__RESET_CONTROL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3CBase__PRESENT_STATE__AC_CURRENT_OWN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__PRESENT_STATE__AC_CURRENT_OWN__in_t AC_CURRENT_OWN;
     } I3CCSR__I3CBase__PRESENT_STATE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3CBase__INTR_STATUS__HC_INTERNAL_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3CBase__INTR_STATUS__HC_SEQ_CANCEL_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3CBase__INTR_STATUS__HC_WARN_CMD_SEQ_STALL_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3CBase__INTR_STATUS__HC_ERR_CMD_SEQ_TIMEOUT_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3CBase__INTR_STATUS__SCHED_CMD_MISSED_TICK_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__INTR_STATUS__HC_INTERNAL_ERR_STAT__in_t HC_INTERNAL_ERR_STAT;
         I3CCSR__I3CBase__INTR_STATUS__HC_SEQ_CANCEL_STAT__in_t HC_SEQ_CANCEL_STAT;
         I3CCSR__I3CBase__INTR_STATUS__HC_WARN_CMD_SEQ_STALL_STAT__in_t HC_WARN_CMD_SEQ_STALL_STAT;
@@ -111,25 +111,25 @@ package I3CCSR_pkg;
         I3CCSR__I3CBase__INTR_STATUS__SCHED_CMD_MISSED_TICK_STAT__in_t SCHED_CMD_MISSED_TICK_STAT;
     } I3CCSR__I3CBase__INTR_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [4:0] next;
         logic we;
     } I3CCSR__I3CBase__DCT_SECTION_OFFSET__TABLE_INDEX__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__DCT_SECTION_OFFSET__TABLE_INDEX__in_t TABLE_INDEX;
     } I3CCSR__I3CBase__DCT_SECTION_OFFSET__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__IBI_DATA_ABORT_MON__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__IBI_DATA_ABORT_MON__in_t IBI_DATA_ABORT_MON;
     } I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__HC_CONTROL__in_t HC_CONTROL;
         I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR__in_t CONTROLLER_DEVICE_ADDR;
         I3CCSR__I3CBase__RESET_CONTROL__in_t RESET_CONTROL;
@@ -139,7 +139,7 @@ package I3CCSR_pkg;
         I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__in_t IBI_DATA_ABORT_CTRL;
     } I3CCSR__I3CBase__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic wr_ack;
     } I3CCSR__PIOControl__COMMAND_PORT__in_t;
 
@@ -147,12 +147,12 @@ package I3CCSR_pkg;
         logic [31:0] RESPONSE_DATA;
     } I3CCSR__PIOControl__RESPONSE_PORT__fields__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic rd_ack;
         I3CCSR__PIOControl__RESPONSE_PORT__fields__in_t rd_data;
     } I3CCSR__PIOControl__RESPONSE_PORT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic wr_ack;
     } I3CCSR__PIOControl__TX_DATA_PORT__in_t;
 
@@ -160,7 +160,7 @@ package I3CCSR_pkg;
         logic [31:0] RX_DATA;
     } I3CCSR__PIOControl__RX_DATA_PORT__fields__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic rd_ack;
         I3CCSR__PIOControl__RX_DATA_PORT__fields__in_t rd_data;
     } I3CCSR__PIOControl__RX_DATA_PORT__in_t;
@@ -169,55 +169,55 @@ package I3CCSR_pkg;
         logic [31:0] IBI_DATA;
     } I3CCSR__PIOControl__IBI_PORT__fields__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic rd_ack;
         I3CCSR__PIOControl__IBI_PORT__fields__in_t rd_data;
     } I3CCSR__PIOControl__IBI_PORT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__PIOControl__QUEUE_THLD_CTRL__CMD_EMPTY_BUF_THLD__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__PIOControl__QUEUE_THLD_CTRL__RESP_BUF_THLD__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__PIOControl__QUEUE_THLD_CTRL__CMD_EMPTY_BUF_THLD__in_t CMD_EMPTY_BUF_THLD;
         I3CCSR__PIOControl__QUEUE_THLD_CTRL__RESP_BUF_THLD__in_t RESP_BUF_THLD;
     } I3CCSR__PIOControl__QUEUE_THLD_CTRL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__PIOControl__PIO_INTR_STATUS__TX_THLD_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__PIOControl__PIO_INTR_STATUS__RX_THLD_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__PIOControl__PIO_INTR_STATUS__IBI_STATUS_THLD_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__PIOControl__PIO_INTR_STATUS__CMD_QUEUE_READY_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__PIOControl__PIO_INTR_STATUS__RESP_READY_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__PIOControl__PIO_INTR_STATUS__TRANSFER_ABORT_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__PIOControl__PIO_INTR_STATUS__TRANSFER_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__PIOControl__PIO_INTR_STATUS__TX_THLD_STAT__in_t TX_THLD_STAT;
         I3CCSR__PIOControl__PIO_INTR_STATUS__RX_THLD_STAT__in_t RX_THLD_STAT;
         I3CCSR__PIOControl__PIO_INTR_STATUS__IBI_STATUS_THLD_STAT__in_t IBI_STATUS_THLD_STAT;
@@ -227,7 +227,7 @@ package I3CCSR_pkg;
         I3CCSR__PIOControl__PIO_INTR_STATUS__TRANSFER_ERR_STAT__in_t TRANSFER_ERR_STAT;
     } I3CCSR__PIOControl__PIO_INTR_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__PIOControl__COMMAND_PORT__in_t COMMAND_PORT;
         I3CCSR__PIOControl__RESPONSE_PORT__in_t RESPONSE_PORT;
         I3CCSR__PIOControl__TX_DATA_PORT__in_t TX_DATA_PORT;
@@ -237,249 +237,249 @@ package I3CCSR_pkg;
         I3CCSR__PIOControl__PIO_INTR_STATUS__in_t PIO_INTR_STATUS;
     } I3CCSR__PIOControl__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2__REC_PROT_VERSION__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2__AGENT_CAPS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2__REC_PROT_VERSION__in_t REC_PROT_VERSION;
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2__AGENT_CAPS__in_t AGENT_CAPS;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__NUM_OF_CMS_REGIONS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__MAX_RESP_TIME__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__HEARTBEAT_PERIOD__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__NUM_OF_CMS_REGIONS__in_t NUM_OF_CMS_REGIONS;
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__MAX_RESP_TIME__in_t MAX_RESP_TIME;
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__HEARTBEAT_PERIOD__in_t HEARTBEAT_PERIOD;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DESC_TYPE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__VENDOR_SPECIFIC_STR_LENGTH__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DATA__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DESC_TYPE__in_t DESC_TYPE;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__VENDOR_SPECIFIC_STR_LENGTH__in_t VENDOR_SPECIFIC_STR_LENGTH;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DATA__in_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_1__DATA__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_1__DATA__in_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_1__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_2__DATA__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_2__DATA__in_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_2__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3__DATA__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3__DATA__in_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4__DATA__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4__DATA__in_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5__DATA__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5__DATA__in_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__DEV_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__PROT_ERROR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__REC_REASON_CODE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__DEV_STATUS__in_t DEV_STATUS;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__PROT_ERROR__in_t PROT_ERROR;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__REC_REASON_CODE__in_t REC_REASON_CODE;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__HEARTBEAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [8:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__VENDOR_STATUS_LENGTH__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [6:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__VENDOR_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__HEARTBEAT__in_t HEARTBEAT;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__VENDOR_STATUS_LENGTH__in_t VENDOR_STATUS_LENGTH;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__VENDOR_STATUS__in_t VENDOR_STATUS;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__RESET_CTRL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__FORCED_RECOVERY__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__IF_CTRL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__RESET_CTRL__in_t RESET_CTRL;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__FORCED_RECOVERY__in_t FORCED_RECOVERY;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__IF_CTRL__in_t IF_CTRL;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__CMS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__REC_IMG_SEL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__ACTIVATE_REC_IMG__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__CMS__in_t CMS;
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__REC_IMG_SEL__in_t REC_IMG_SEL;
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__ACTIVATE_REC_IMG__in_t ACTIVATE_REC_IMG;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [3:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__DEV_REC_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [3:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__REC_IMG_INDEX__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__VENDOR_SPECIFIC_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__DEV_REC_STATUS__in_t DEV_REC_STATUS;
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__REC_IMG_INDEX__in_t REC_IMG_INDEX;
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__VENDOR_SPECIFIC_STATUS__in_t VENDOR_SPECIFIC_STATUS;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__TEMP_CRITICAL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__SOFT_ERR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__FATAL_ERR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [4:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__RESERVED_7_3__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__VENDOR_HW_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__CTEMP__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__VENDOR_HW_STATUS_LEN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__TEMP_CRITICAL__in_t TEMP_CRITICAL;
         I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__SOFT_ERR__in_t SOFT_ERR;
         I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__FATAL_ERR__in_t FATAL_ERR;
@@ -489,82 +489,82 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__VENDOR_HW_STATUS_LEN__in_t VENDOR_HW_STATUS_LEN;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__CMS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
         logic hwclr;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__RESET__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__CMS__in_t CMS;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__RESET__in_t RESET;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__IMAGE_SIZE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__IMAGE_SIZE__in_t IMAGE_SIZE;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__EMPTY__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__FULL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__REGION_TYPE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__EMPTY__in_t EMPTY;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__FULL__in_t FULL;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__REGION_TYPE__in_t REGION_TYPE;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1__WRITE_INDEX__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1__WRITE_INDEX__in_t WRITE_INDEX;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2__READ_INDEX__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2__READ_INDEX__in_t READ_INDEX;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] next;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3__FIFO_SIZE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3__FIFO_SIZE__in_t FIFO_SIZE;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] next;
         logic we;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_RESERVED__DATA__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_RESERVED__DATA__in_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_RESERVED__in_t;
 
@@ -572,12 +572,12 @@ package I3CCSR_pkg;
         logic [31:0] DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__fields__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic rd_ack;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__fields__in_t rd_data;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2__in_t PROT_CAP_2;
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__in_t PROT_CAP_3;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__in_t DEVICE_ID_0;
@@ -602,49 +602,49 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__in_t INDIRECT_FIFO_DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__PENDING_RX_NACK__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__HANDOFF_DELAY_NACK__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__ACR_FSM_OP_SELECT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__PRIME_ACCEPT_GETACCCR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
         logic hwclr;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__HANDOFF_DEEP_SLEEP__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__TARGET_XACT_ENABLE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_SETAASA_ENABLE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_SETDASA_ENABLE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_ENTDAA_ENABLE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__PENDING_RX_NACK__in_t PENDING_RX_NACK;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__HANDOFF_DELAY_NACK__in_t HANDOFF_DELAY_NACK;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__ACR_FSM_OP_SELECT__in_t ACR_FSM_OP_SELECT;
@@ -656,105 +656,105 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_ENTDAA_ENABLE__in_t DAA_ENTDAA_ENABLE;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [6:0] next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__STATIC_ADDR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__STATIC_ADDR_VALID__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [6:0] next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR_VALID__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__STATIC_ADDR__in_t STATIC_ADDR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__STATIC_ADDR_VALID__in_t STATIC_ADDR_VALID;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR__in_t DYNAMIC_ADDR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR_VALID__in_t DYNAMIC_ADDR_VALID;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__AC_CURRENT_OWN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__SIMPLE_CRR_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__HJ_REQ_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__AC_CURRENT_OWN__in_t AC_CURRENT_OWN;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__SIMPLE_CRR_STATUS__in_t SIMPLE_CRR_STATUS;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__HJ_REQ_STATUS__in_t HJ_REQ_STATUS;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_REMAIN_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_PRIMED_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_FAIL_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_M3_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__CRR_RESPONSE_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__STBY_CR_DYN_ADDR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_NACKED_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_OK_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__STBY_CR_OP_RSTACT_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__CCC_PARAM_MODIFIED_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__CCC_UNHANDLED_NACK_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__CCC_FATAL_RSTDAA_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_REMAIN_STAT__in_t ACR_HANDOFF_OK_REMAIN_STAT;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_PRIMED_STAT__in_t ACR_HANDOFF_OK_PRIMED_STAT;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_FAIL_STAT__in_t ACR_HANDOFF_ERR_FAIL_STAT;
@@ -770,60 +770,60 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__CCC_FATAL_RSTDAA_ERR_STAT__in_t CCC_FATAL_RSTDAA_ERR_STAT;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_REMAIN_SIGNAL_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_PRIMED_SIGNAL_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_FAIL_SIGNAL_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_M3_SIGNAL_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__CRR_RESPONSE_SIGNAL_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_DYN_ADDR_SIGNAL_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_NACKED_SIGNAL_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_OK_SIGNAL_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_ERR_SIGNAL_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_OP_RSTACT_SIGNAL_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__CCC_PARAM_MODIFIED_SIGNAL_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__CCC_UNHANDLED_NACK_SIGNAL_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__CCC_FATAL_RSTDAA_ERR_SIGNAL_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_REMAIN_SIGNAL_EN__in_t ACR_HANDOFF_OK_REMAIN_SIGNAL_EN;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_PRIMED_SIGNAL_EN__in_t ACR_HANDOFF_OK_PRIMED_SIGNAL_EN;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_FAIL_SIGNAL_EN__in_t ACR_HANDOFF_ERR_FAIL_SIGNAL_EN;
@@ -839,44 +839,44 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__CCC_FATAL_RSTDAA_ERR_SIGNAL_EN__in_t CCC_FATAL_RSTDAA_ERR_SIGNAL_EN;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__CRR_RESPONSE_FORCE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_DYN_ADDR_FORCE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_NACKED_FORCE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_OK_FORCE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_ERR_FORCE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_OP_RSTACT_FORCE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__CCC_PARAM_MODIFIED_FORCE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__CCC_UNHANDLED_NACK_FORCE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__CCC_FATAL_RSTDAA_ERR_FORCE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__CRR_RESPONSE_FORCE__in_t CRR_RESPONSE_FORCE;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_DYN_ADDR_FORCE__in_t STBY_CR_DYN_ADDR_FORCE;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_NACKED_FORCE__in_t STBY_CR_ACCEPT_NACKED_FORCE;
@@ -888,95 +888,95 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__CCC_FATAL_RSTDAA_ERR_FORCE__in_t CCC_FATAL_RSTDAA_ERR_FORCE;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP1_BUS_CONFIG__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [3:0] next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP2_DEV_INTERACT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP1_BUS_CONFIG__in_t F2_CRCAP1_BUS_CONFIG;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP2_DEV_INTERACT__in_t F2_CRCAP2_DEV_INTERACT;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RST_ACTION__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_PERIPHERAL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_TARGET__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_DYNAMIC_ADDR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RST_ACTION__in_t RST_ACTION;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_PERIPHERAL__in_t RESET_TIME_PERIPHERAL;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_TARGET__in_t RESET_TIME_TARGET;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_DYNAMIC_ADDR__in_t RESET_DYNAMIC_ADDR;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [6:0] next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR_VALID__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [6:0] next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR_VALID__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR__in_t VIRT_STATIC_ADDR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR_VALID__in_t VIRT_STATIC_ADDR_VALID;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR__in_t VIRT_DYNAMIC_ADDR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR_VALID__in_t VIRT_DYNAMIC_ADDR_VALID;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL__MWL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL__MWL__in_t MWL;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL__MRL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL__IBIL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL__MRL__in_t MRL;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL__IBIL__in_t IBIL;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__in_t STBY_CR_CONTROL;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__in_t STBY_CR_DEVICE_ADDR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__in_t STBY_CR_STATUS;
@@ -990,72 +990,72 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL__in_t STBY_CR_MRL;
     } I3CCSR__I3C_EC__StdbyCtrlMode__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__CONTROL__HJ_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__CONTROL__CRR_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__CONTROL__IBI_EN__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__CONTROL__HJ_EN__in_t HJ_EN;
         I3CCSR__I3C_EC__TTI__CONTROL__CRR_EN__in_t CRR_EN;
         I3CCSR__I3C_EC__TTI__CONTROL__IBI_EN__in_t IBI_EN;
     } I3CCSR__I3C_EC__TTI__CONTROL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__TTI__STATUS__PROTOCOL_ERROR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__STATUS__LAST_IBI_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__STATUS__PROTOCOL_ERROR__in_t PROTOCOL_ERROR;
         I3CCSR__I3C_EC__TTI__STATUS__LAST_IBI_STATUS__in_t LAST_IBI_STATUS;
     } I3CCSR__I3C_EC__TTI__STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__SOFT_RST__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__TX_DESC_RST__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__RX_DESC_RST__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__TX_DATA_RST__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__RX_DATA_RST__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__IBI_QUEUE_RST__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__SOFT_RST__in_t SOFT_RST;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__TX_DESC_RST__in_t TX_DESC_RST;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__RX_DESC_RST__in_t RX_DESC_RST;
@@ -1064,47 +1064,47 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__IBI_QUEUE_RST__in_t IBI_QUEUE_RST;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__TTI__QUEUE_STATUS__RX_DESC_QUEUE_FULL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__TTI__QUEUE_STATUS__RX_DESC_QUEUE_EMPTY__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__TTI__QUEUE_STATUS__TX_DESC_QUEUE_FULL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__TTI__QUEUE_STATUS__TX_DESC_QUEUE_EMPTY__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__TTI__QUEUE_STATUS__RX_DATA_QUEUE_FULL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__TTI__QUEUE_STATUS__RX_DATA_QUEUE_EMPTY__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__TTI__QUEUE_STATUS__TX_DATA_QUEUE_FULL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__TTI__QUEUE_STATUS__TX_DATA_QUEUE_EMPTY__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__TTI__QUEUE_STATUS__IBI_QUEUE_FULL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__TTI__QUEUE_STATUS__IBI_QUEUE_EMPTY__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__QUEUE_STATUS__RX_DESC_QUEUE_FULL__in_t RX_DESC_QUEUE_FULL;
         I3CCSR__I3C_EC__TTI__QUEUE_STATUS__RX_DESC_QUEUE_EMPTY__in_t RX_DESC_QUEUE_EMPTY;
         I3CCSR__I3C_EC__TTI__QUEUE_STATUS__TX_DESC_QUEUE_FULL__in_t TX_DESC_QUEUE_FULL;
@@ -1117,114 +1117,114 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__QUEUE_STATUS__IBI_QUEUE_EMPTY__in_t IBI_QUEUE_EMPTY;
     } I3CCSR__I3C_EC__TTI__QUEUE_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
     } I3CCSR__I3C_EC__TTI__DESC_QUEUE_DEPTH__RX_DESC_QUEUE_DEPTH__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
     } I3CCSR__I3C_EC__TTI__DESC_QUEUE_DEPTH__TX_DESC_QUEUE_DEPTH__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__DESC_QUEUE_DEPTH__RX_DESC_QUEUE_DEPTH__in_t RX_DESC_QUEUE_DEPTH;
         I3CCSR__I3C_EC__TTI__DESC_QUEUE_DEPTH__TX_DESC_QUEUE_DEPTH__in_t TX_DESC_QUEUE_DEPTH;
     } I3CCSR__I3C_EC__TTI__DESC_QUEUE_DEPTH__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
     } I3CCSR__I3C_EC__TTI__DATA_QUEUE_DEPTH__RX_DATA_QUEUE_DEPTH__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
     } I3CCSR__I3C_EC__TTI__DATA_QUEUE_DEPTH__TX_DATA_QUEUE_DEPTH__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__DATA_QUEUE_DEPTH__RX_DATA_QUEUE_DEPTH__in_t RX_DATA_QUEUE_DEPTH;
         I3CCSR__I3C_EC__TTI__DATA_QUEUE_DEPTH__TX_DATA_QUEUE_DEPTH__in_t TX_DATA_QUEUE_DEPTH;
     } I3CCSR__I3C_EC__TTI__DATA_QUEUE_DEPTH__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
     } I3CCSR__I3C_EC__TTI__IBI_QUEUE_DEPTH__IBI_QUEUE_DEPTH__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__IBI_QUEUE_DEPTH__IBI_QUEUE_DEPTH__in_t IBI_QUEUE_DEPTH;
     } I3CCSR__I3C_EC__TTI__IBI_QUEUE_DEPTH__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DESC_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_TIMEOUT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DESC_TIMEOUT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DATA_THLD_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DATA_THLD_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DESC_THLD_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_THLD_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__IBI_THLD_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__IBI_DONE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [3:0] next;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__PENDING_INTERRUPT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__PENDING_IBI__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ABORT_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DESC_COMPLETE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_STAT__in_t RX_DESC_STAT;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DESC_STAT__in_t TX_DESC_STAT;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_TIMEOUT__in_t RX_DESC_TIMEOUT;
@@ -1242,72 +1242,72 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ERR_STAT__in_t TRANSFER_ERR_STAT;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE0_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE1_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE2_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE3_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE4_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE5_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__FRAMING_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_PEC_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_LENGTH_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_READONLY_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_UNSUPPORTED_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_RX_FIFO_OVERFLOW_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE0_ERR_STAT__in_t TE0_ERR_STAT;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE1_ERR_STAT__in_t TE1_ERR_STAT;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE2_ERR_STAT__in_t TE2_ERR_STAT;
@@ -1323,120 +1323,120 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT__in_t RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE0__CNT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE0__CNT__in_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE0__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE1__CNT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE1__CNT__in_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE1__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE2__CNT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE2__CNT__in_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE2__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE3__CNT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE3__CNT__in_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE3__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE4__CNT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE4__CNT__in_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE4__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE5__CNT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE5__CNT__in_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE5__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_FRAMING__CNT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_FRAMING__CNT__in_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_FRAMING__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_PEC__CNT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_PEC__CNT__in_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_PEC__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_LENGTH__CNT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_LENGTH__CNT__in_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_LENGTH__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_READONLY__CNT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_READONLY__CNT__in_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_READONLY__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_UNSUPPORTED__CNT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_UNSUPPORTED__CNT__in_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_UNSUPPORTED__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_RX_FIFO_OVERFLOW__CNT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_RX_FIFO_OVERFLOW__CNT__in_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_RX_FIFO_OVERFLOW__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_INDIRECT_FIFO_OVERFLOW__CNT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_INDIRECT_FIFO_OVERFLOW__CNT__in_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_INDIRECT_FIFO_OVERFLOW__in_t;
 
@@ -1444,7 +1444,7 @@ package I3CCSR_pkg;
         logic [31:0] RX_DESC;
     } I3CCSR__I3C_EC__TTI__RX_DESC_QUEUE_PORT__fields__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic rd_ack;
         I3CCSR__I3C_EC__TTI__RX_DESC_QUEUE_PORT__fields__in_t rd_data;
     } I3CCSR__I3C_EC__TTI__RX_DESC_QUEUE_PORT__in_t;
@@ -1453,45 +1453,45 @@ package I3CCSR_pkg;
         logic [31:0] RX_DATA;
     } I3CCSR__I3C_EC__TTI__RX_DATA_PORT__fields__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic rd_ack;
         I3CCSR__I3C_EC__TTI__RX_DATA_PORT__fields__in_t rd_data;
     } I3CCSR__I3C_EC__TTI__RX_DATA_PORT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic wr_ack;
     } I3CCSR__I3C_EC__TTI__TX_DESC_QUEUE_PORT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic wr_ack;
     } I3CCSR__I3C_EC__TTI__TX_DATA_PORT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic wr_ack;
     } I3CCSR__I3C_EC__TTI__IBI_PORT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__TX_DESC_THLD__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__RX_DESC_THLD__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__IBI_THLD__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__TX_DESC_THLD__in_t TX_DESC_THLD;
         I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__RX_DESC_THLD__in_t RX_DESC_THLD;
         I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__IBI_THLD__in_t IBI_THLD;
     } I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__CONTROL__in_t CONTROL;
         I3CCSR__I3C_EC__TTI__STATUS__in_t STATUS;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__in_t RESET_CONTROL;
@@ -1522,55 +1522,55 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__in_t QUEUE_THLD_CTRL;
     } I3CCSR__I3C_EC__TTI__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic next;
         logic we;
     } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__REC_PAYLOAD_DONE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__REC_PAYLOAD_DONE__in_t REC_PAYLOAD_DONE;
     } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__DEVICE_RESET_CTRL__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__RECOVERY_CTRL_ACTIVATE_REC_IMG__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] next;
         logic we;
     } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__INDIRECT_FIFO_CTRL_RESET__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__DEVICE_RESET_CTRL__in_t DEVICE_RESET_CTRL;
         I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__RECOVERY_CTRL_ACTIVATE_REC_IMG__in_t RECOVERY_CTRL_ACTIVATE_REC_IMG;
         I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__INDIRECT_FIFO_CTRL_RESET__in_t INDIRECT_FIFO_CTRL_RESET;
     } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__in_t REC_INTF_CFG;
         I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__in_t REC_INTF_REG_W1C_ACCESS;
     } I3CCSR__I3C_EC__SoCMgmtIf__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [1:0] next;
         logic we;
     } I3CCSR__I3C_EC__CtrlCfg__CONTROLLER_CONFIG__OPERATION_MODE__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__CtrlCfg__CONTROLLER_CONFIG__OPERATION_MODE__in_t OPERATION_MODE;
     } I3CCSR__I3C_EC__CtrlCfg__CONTROLLER_CONFIG__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__CtrlCfg__CONTROLLER_CONFIG__in_t CONTROLLER_CONFIG;
     } I3CCSR__I3C_EC__CtrlCfg__in_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__in_t SecFwRecoveryIf;
         I3CCSR__I3C_EC__StdbyCtrlMode__in_t StdbyCtrlMode;
         I3CCSR__I3C_EC__TTI__in_t TTI;
@@ -1578,19 +1578,19 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__CtrlCfg__in_t CtrlCfg;
     } I3CCSR__I3C_EC__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic rd_ack;
         logic [31:0] rd_data;
         logic wr_ack;
     } I3CCSR__DAT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic rd_ack;
         logic [31:0] rd_data;
         logic wr_ack;
     } I3CCSR__DCT__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic rst_ni;
         I3CCSR__I3CBase__in_t I3CBase;
         I3CCSR__PIOControl__in_t PIOControl;
@@ -1599,35 +1599,35 @@ package I3CCSR_pkg;
         I3CCSR__DCT__in_t DCT;
     } I3CCSR__in_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__HC_CONTROL__IBA_INCLUDE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__HC_CONTROL__I2C_DEV_PRESENT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__HC_CONTROL__HOT_JOIN_CTRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__HC_CONTROL__HALT_ON_CMD_SEQ_TIMEOUT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__HC_CONTROL__ABORT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__HC_CONTROL__RESUME__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__HC_CONTROL__BUS_ENABLE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__HC_CONTROL__IBA_INCLUDE__out_t IBA_INCLUDE;
         I3CCSR__I3CBase__HC_CONTROL__I2C_DEV_PRESENT__out_t I2C_DEV_PRESENT;
         I3CCSR__I3CBase__HC_CONTROL__HOT_JOIN_CTRL__out_t HOT_JOIN_CTRL;
@@ -1637,44 +1637,44 @@ package I3CCSR_pkg;
         I3CCSR__I3CBase__HC_CONTROL__BUS_ENABLE__out_t BUS_ENABLE;
     } I3CCSR__I3CBase__HC_CONTROL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [6:0] value;
     } I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR__DYNAMIC_ADDR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR__DYNAMIC_ADDR_VALID__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR__DYNAMIC_ADDR__out_t DYNAMIC_ADDR;
         I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR__DYNAMIC_ADDR_VALID__out_t DYNAMIC_ADDR_VALID;
     } I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__RESET_CONTROL__SOFT_RST__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__RESET_CONTROL__CMD_QUEUE_RST__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__RESET_CONTROL__RESP_QUEUE_RST__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__RESET_CONTROL__TX_FIFO_RST__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__RESET_CONTROL__RX_FIFO_RST__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__RESET_CONTROL__IBI_QUEUE_RST__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__RESET_CONTROL__SOFT_RST__out_t SOFT_RST;
         I3CCSR__I3CBase__RESET_CONTROL__CMD_QUEUE_RST__out_t CMD_QUEUE_RST;
         I3CCSR__I3CBase__RESET_CONTROL__RESP_QUEUE_RST__out_t RESP_QUEUE_RST;
@@ -1683,31 +1683,31 @@ package I3CCSR_pkg;
         I3CCSR__I3CBase__RESET_CONTROL__IBI_QUEUE_RST__out_t IBI_QUEUE_RST;
     } I3CCSR__I3CBase__RESET_CONTROL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic intr;
     } I3CCSR__I3CBase__INTR_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_STATUS_ENABLE__HC_INTERNAL_ERR_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_STATUS_ENABLE__HC_SEQ_CANCEL_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_STATUS_ENABLE__HC_WARN_CMD_SEQ_STALL_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_STATUS_ENABLE__HC_ERR_CMD_SEQ_TIMEOUT_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_STATUS_ENABLE__SCHED_CMD_MISSED_TICK_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__INTR_STATUS_ENABLE__HC_INTERNAL_ERR_STAT_EN__out_t HC_INTERNAL_ERR_STAT_EN;
         I3CCSR__I3CBase__INTR_STATUS_ENABLE__HC_SEQ_CANCEL_STAT_EN__out_t HC_SEQ_CANCEL_STAT_EN;
         I3CCSR__I3CBase__INTR_STATUS_ENABLE__HC_WARN_CMD_SEQ_STALL_STAT_EN__out_t HC_WARN_CMD_SEQ_STALL_STAT_EN;
@@ -1715,27 +1715,27 @@ package I3CCSR_pkg;
         I3CCSR__I3CBase__INTR_STATUS_ENABLE__SCHED_CMD_MISSED_TICK_STAT_EN__out_t SCHED_CMD_MISSED_TICK_STAT_EN;
     } I3CCSR__I3CBase__INTR_STATUS_ENABLE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_SIGNAL_ENABLE__HC_INTERNAL_ERR_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_SIGNAL_ENABLE__HC_SEQ_CANCEL_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_SIGNAL_ENABLE__HC_WARN_CMD_SEQ_STALL_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_SIGNAL_ENABLE__HC_ERR_CMD_SEQ_TIMEOUT_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_SIGNAL_ENABLE__SCHED_CMD_MISSED_TICK_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__INTR_SIGNAL_ENABLE__HC_INTERNAL_ERR_SIGNAL_EN__out_t HC_INTERNAL_ERR_SIGNAL_EN;
         I3CCSR__I3CBase__INTR_SIGNAL_ENABLE__HC_SEQ_CANCEL_SIGNAL_EN__out_t HC_SEQ_CANCEL_SIGNAL_EN;
         I3CCSR__I3CBase__INTR_SIGNAL_ENABLE__HC_WARN_CMD_SEQ_STALL_SIGNAL_EN__out_t HC_WARN_CMD_SEQ_STALL_SIGNAL_EN;
@@ -1743,27 +1743,27 @@ package I3CCSR_pkg;
         I3CCSR__I3CBase__INTR_SIGNAL_ENABLE__SCHED_CMD_MISSED_TICK_SIGNAL_EN__out_t SCHED_CMD_MISSED_TICK_SIGNAL_EN;
     } I3CCSR__I3CBase__INTR_SIGNAL_ENABLE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_FORCE__HC_INTERNAL_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_FORCE__HC_SEQ_CANCEL_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_FORCE__HC_WARN_CMD_SEQ_STALL_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_FORCE__HC_ERR_CMD_SEQ_TIMEOUT_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__INTR_FORCE__SCHED_CMD_MISSED_TICK_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__INTR_FORCE__HC_INTERNAL_ERR_FORCE__out_t HC_INTERNAL_ERR_FORCE;
         I3CCSR__I3CBase__INTR_FORCE__HC_SEQ_CANCEL_FORCE__out_t HC_SEQ_CANCEL_FORCE;
         I3CCSR__I3CBase__INTR_FORCE__HC_WARN_CMD_SEQ_STALL_FORCE__out_t HC_WARN_CMD_SEQ_STALL_FORCE;
@@ -1771,72 +1771,72 @@ package I3CCSR_pkg;
         I3CCSR__I3CBase__INTR_FORCE__SCHED_CMD_MISSED_TICK_FORCE__out_t SCHED_CMD_MISSED_TICK_FORCE;
     } I3CCSR__I3CBase__INTR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [4:0] value;
     } I3CCSR__I3CBase__DCT_SECTION_OFFSET__TABLE_INDEX__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__DCT_SECTION_OFFSET__TABLE_INDEX__out_t TABLE_INDEX;
     } I3CCSR__I3CBase__DCT_SECTION_OFFSET__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__IBI_NOTIFY_CTRL__NOTIFY_HJ_REJECTED__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__IBI_NOTIFY_CTRL__NOTIFY_CRR_REJECTED__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__IBI_NOTIFY_CTRL__NOTIFY_IBI_REJECTED__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__IBI_NOTIFY_CTRL__NOTIFY_HJ_REJECTED__out_t NOTIFY_HJ_REJECTED;
         I3CCSR__I3CBase__IBI_NOTIFY_CTRL__NOTIFY_CRR_REJECTED__out_t NOTIFY_CRR_REJECTED;
         I3CCSR__I3CBase__IBI_NOTIFY_CTRL__NOTIFY_IBI_REJECTED__out_t NOTIFY_IBI_REJECTED;
     } I3CCSR__I3CBase__IBI_NOTIFY_CTRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__MATCH_IBI_ID__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [1:0] value;
     } I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__AFTER_N_CHUNKS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__MATCH_STATUS_TYPE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__IBI_DATA_ABORT_MON__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__MATCH_IBI_ID__out_t MATCH_IBI_ID;
         I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__AFTER_N_CHUNKS__out_t AFTER_N_CHUNKS;
         I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__MATCH_STATUS_TYPE__out_t MATCH_STATUS_TYPE;
         I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__IBI_DATA_ABORT_MON__out_t IBI_DATA_ABORT_MON;
     } I3CCSR__I3CBase__IBI_DATA_ABORT_CTRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__DEV_CTX_BASE_LO__BASE_LO__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__DEV_CTX_BASE_LO__BASE_LO__out_t BASE_LO;
     } I3CCSR__I3CBase__DEV_CTX_BASE_LO__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3CBase__DEV_CTX_BASE_HI__BASE_HI__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__DEV_CTX_BASE_HI__BASE_HI__out_t BASE_HI;
     } I3CCSR__I3CBase__DEV_CTX_BASE_HI__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__HC_CONTROL__out_t HC_CONTROL;
         I3CCSR__I3CBase__CONTROLLER_DEVICE_ADDR__out_t CONTROLLER_DEVICE_ADDR;
         I3CCSR__I3CBase__RESET_CONTROL__out_t RESET_CONTROL;
@@ -1855,14 +1855,14 @@ package I3CCSR_pkg;
         logic [31:0] COMMAND_DATA;
     } I3CCSR__PIOControl__COMMAND_PORT__fields__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic req;
         logic req_is_wr;
         I3CCSR__PIOControl__COMMAND_PORT__fields__out_t wr_data;
         I3CCSR__PIOControl__COMMAND_PORT__fields__out_t wr_biten;
     } I3CCSR__PIOControl__COMMAND_PORT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic req;
         logic req_is_wr;
     } I3CCSR__PIOControl__RESPONSE_PORT__out_t;
@@ -1871,104 +1871,104 @@ package I3CCSR_pkg;
         logic [31:0] TX_DATA;
     } I3CCSR__PIOControl__TX_DATA_PORT__fields__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic req;
         logic req_is_wr;
         I3CCSR__PIOControl__TX_DATA_PORT__fields__out_t wr_data;
         I3CCSR__PIOControl__TX_DATA_PORT__fields__out_t wr_biten;
     } I3CCSR__PIOControl__TX_DATA_PORT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic req;
         logic req_is_wr;
     } I3CCSR__PIOControl__RX_DATA_PORT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic req;
         logic req_is_wr;
     } I3CCSR__PIOControl__IBI_PORT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
         logic swmod;
     } I3CCSR__PIOControl__QUEUE_THLD_CTRL__CMD_EMPTY_BUF_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
         logic swmod;
     } I3CCSR__PIOControl__QUEUE_THLD_CTRL__RESP_BUF_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__PIOControl__QUEUE_THLD_CTRL__IBI_DATA_SEGMENT_SIZE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__PIOControl__QUEUE_THLD_CTRL__IBI_STATUS_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__PIOControl__QUEUE_THLD_CTRL__CMD_EMPTY_BUF_THLD__out_t CMD_EMPTY_BUF_THLD;
         I3CCSR__PIOControl__QUEUE_THLD_CTRL__RESP_BUF_THLD__out_t RESP_BUF_THLD;
         I3CCSR__PIOControl__QUEUE_THLD_CTRL__IBI_DATA_SEGMENT_SIZE__out_t IBI_DATA_SEGMENT_SIZE;
         I3CCSR__PIOControl__QUEUE_THLD_CTRL__IBI_STATUS_THLD__out_t IBI_STATUS_THLD;
     } I3CCSR__PIOControl__QUEUE_THLD_CTRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL__TX_BUF_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL__RX_BUF_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL__TX_START_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL__RX_START_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL__TX_BUF_THLD__out_t TX_BUF_THLD;
         I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL__RX_BUF_THLD__out_t RX_BUF_THLD;
         I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL__TX_START_THLD__out_t TX_START_THLD;
         I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL__RX_START_THLD__out_t RX_START_THLD;
     } I3CCSR__PIOControl__DATA_BUFFER_THLD_CTRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic intr;
     } I3CCSR__PIOControl__PIO_INTR_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__PIOControl__PIO_INTR_FORCE__TX_THLD_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__PIOControl__PIO_INTR_FORCE__RX_THLD_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__PIOControl__PIO_INTR_FORCE__IBI_THLD_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__PIOControl__PIO_INTR_FORCE__CMD_QUEUE_READY_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__PIOControl__PIO_INTR_FORCE__RESP_READY_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__PIOControl__PIO_INTR_FORCE__TRANSFER_ABORT_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__PIOControl__PIO_INTR_FORCE__TRANSFER_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__PIOControl__PIO_INTR_FORCE__TX_THLD_FORCE__out_t TX_THLD_FORCE;
         I3CCSR__PIOControl__PIO_INTR_FORCE__RX_THLD_FORCE__out_t RX_THLD_FORCE;
         I3CCSR__PIOControl__PIO_INTR_FORCE__IBI_THLD_FORCE__out_t IBI_THLD_FORCE;
@@ -1978,25 +1978,25 @@ package I3CCSR_pkg;
         I3CCSR__PIOControl__PIO_INTR_FORCE__TRANSFER_ERR_FORCE__out_t TRANSFER_ERR_FORCE;
     } I3CCSR__PIOControl__PIO_INTR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__PIOControl__PIO_CONTROL__ENABLE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__PIOControl__PIO_CONTROL__RS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__PIOControl__PIO_CONTROL__ABORT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__PIOControl__PIO_CONTROL__ENABLE__out_t ENABLE;
         I3CCSR__PIOControl__PIO_CONTROL__RS__out_t RS;
         I3CCSR__PIOControl__PIO_CONTROL__ABORT__out_t ABORT;
     } I3CCSR__PIOControl__PIO_CONTROL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__PIOControl__COMMAND_PORT__out_t COMMAND_PORT;
         I3CCSR__PIOControl__RESPONSE_PORT__out_t RESPONSE_PORT;
         I3CCSR__PIOControl__TX_DATA_PORT__out_t TX_DATA_PORT;
@@ -2009,254 +2009,254 @@ package I3CCSR_pkg;
         I3CCSR__PIOControl__PIO_CONTROL__out_t PIO_CONTROL;
     } I3CCSR__PIOControl__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__EXTCAP_HEADER__CAP_ID__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__EXTCAP_HEADER__CAP_LENGTH__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__EXTCAP_HEADER__CAP_ID__out_t CAP_ID;
         I3CCSR__I3C_EC__SecFwRecoveryIf__EXTCAP_HEADER__CAP_LENGTH__out_t CAP_LENGTH;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__EXTCAP_HEADER__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_0__REC_MAGIC_STRING_0__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_0__REC_MAGIC_STRING_0__out_t REC_MAGIC_STRING_0;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_0__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_1__REC_MAGIC_STRING_1__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_1__REC_MAGIC_STRING_1__out_t REC_MAGIC_STRING_1;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_1__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2__REC_PROT_VERSION__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2__AGENT_CAPS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2__REC_PROT_VERSION__out_t REC_PROT_VERSION;
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2__AGENT_CAPS__out_t AGENT_CAPS;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_2__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__NUM_OF_CMS_REGIONS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__MAX_RESP_TIME__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__HEARTBEAT_PERIOD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__NUM_OF_CMS_REGIONS__out_t NUM_OF_CMS_REGIONS;
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__MAX_RESP_TIME__out_t MAX_RESP_TIME;
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__HEARTBEAT_PERIOD__out_t HEARTBEAT_PERIOD;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_3__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DESC_TYPE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__VENDOR_SPECIFIC_STR_LENGTH__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DATA__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DESC_TYPE__out_t DESC_TYPE;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__VENDOR_SPECIFIC_STR_LENGTH__out_t VENDOR_SPECIFIC_STR_LENGTH;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__DATA__out_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_0__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_1__DATA__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_1__DATA__out_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_1__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_2__DATA__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_2__DATA__out_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_2__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3__DATA__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3__DATA__out_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_3__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4__DATA__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4__DATA__out_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_4__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5__DATA__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5__DATA__out_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_5__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED__DATA__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED__DATA__out_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_ID_RESERVED__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__DEV_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__PROT_ERROR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__REC_REASON_CODE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__DEV_STATUS__out_t DEV_STATUS;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__PROT_ERROR__out_t PROT_ERROR;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__REC_REASON_CODE__out_t REC_REASON_CODE;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_0__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__HEARTBEAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [8:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__VENDOR_STATUS_LENGTH__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [6:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__VENDOR_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__HEARTBEAT__out_t HEARTBEAT;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__VENDOR_STATUS_LENGTH__out_t VENDOR_STATUS_LENGTH;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__VENDOR_STATUS__out_t VENDOR_STATUS;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_STATUS_1__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__RESET_CTRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__FORCED_RECOVERY__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__IF_CTRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__RESET_CTRL__out_t RESET_CTRL;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__FORCED_RECOVERY__out_t FORCED_RECOVERY;
         I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__IF_CTRL__out_t IF_CTRL;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__DEVICE_RESET__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
         logic swmod;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__CMS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
         logic swmod;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__REC_IMG_SEL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
         logic swmod;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__ACTIVATE_REC_IMG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__CMS__out_t CMS;
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__REC_IMG_SEL__out_t REC_IMG_SEL;
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__ACTIVATE_REC_IMG__out_t ACTIVATE_REC_IMG;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_CTRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [3:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__DEV_REC_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [3:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__REC_IMG_INDEX__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__VENDOR_SPECIFIC_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__DEV_REC_STATUS__out_t DEV_REC_STATUS;
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__REC_IMG_INDEX__out_t REC_IMG_INDEX;
         I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__VENDOR_SPECIFIC_STATUS__out_t VENDOR_SPECIFIC_STATUS;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__RECOVERY_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__TEMP_CRITICAL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__SOFT_ERR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__FATAL_ERR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [4:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__RESERVED_7_3__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__VENDOR_HW_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__CTEMP__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__VENDOR_HW_STATUS_LEN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__TEMP_CRITICAL__out_t TEMP_CRITICAL;
         I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__SOFT_ERR__out_t SOFT_ERR;
         I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__FATAL_ERR__out_t FATAL_ERR;
@@ -2266,91 +2266,91 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__VENDOR_HW_STATUS_LEN__out_t VENDOR_HW_STATUS_LEN;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__HW_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__CMS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__RESET__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__CMS__out_t CMS;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__RESET__out_t RESET;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_0__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__IMAGE_SIZE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__IMAGE_SIZE__out_t IMAGE_SIZE;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_CTRL_1__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__EMPTY__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__FULL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__REGION_TYPE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__EMPTY__out_t EMPTY;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__FULL__out_t FULL;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__REGION_TYPE__out_t REGION_TYPE;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_0__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1__WRITE_INDEX__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1__WRITE_INDEX__out_t WRITE_INDEX;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_1__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2__READ_INDEX__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2__READ_INDEX__out_t READ_INDEX;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_2__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3__FIFO_SIZE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3__FIFO_SIZE__out_t FIFO_SIZE;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_3__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__MAX_TRANSFER_SIZE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__MAX_TRANSFER_SIZE__out_t MAX_TRANSFER_SIZE;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_STATUS_4__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_RESERVED__DATA__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_RESERVED__DATA__out_t DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_RESERVED__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic req;
         logic req_is_wr;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__EXTCAP_HEADER__out_t EXTCAP_HEADER;
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_0__out_t PROT_CAP_0;
         I3CCSR__I3C_EC__SecFwRecoveryIf__PROT_CAP_1__out_t PROT_CAP_1;
@@ -2380,72 +2380,72 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SecFwRecoveryIf__INDIRECT_FIFO_DATA__out_t INDIRECT_FIFO_DATA;
     } I3CCSR__I3C_EC__SecFwRecoveryIf__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__EXTCAP_HEADER__CAP_ID__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__EXTCAP_HEADER__CAP_LENGTH__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__EXTCAP_HEADER__CAP_ID__out_t CAP_ID;
         I3CCSR__I3C_EC__StdbyCtrlMode__EXTCAP_HEADER__CAP_LENGTH__out_t CAP_LENGTH;
     } I3CCSR__I3C_EC__StdbyCtrlMode__EXTCAP_HEADER__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__PENDING_RX_NACK__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__HANDOFF_DELAY_NACK__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__ACR_FSM_OP_SELECT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__PRIME_ACCEPT_GETACCCR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__HANDOFF_DEEP_SLEEP__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__CR_REQUEST_SEND__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__BAST_CCC_IBI_RING__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__TARGET_XACT_ENABLE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_SETAASA_ENABLE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_SETDASA_ENABLE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__DAA_ENTDAA_ENABLE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__RSTACT_DEFBYTE_02__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [1:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__STBY_CR_ENABLE_INIT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__PENDING_RX_NACK__out_t PENDING_RX_NACK;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__HANDOFF_DELAY_NACK__out_t HANDOFF_DELAY_NACK;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__ACR_FSM_OP_SELECT__out_t ACR_FSM_OP_SELECT;
@@ -2461,50 +2461,50 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__STBY_CR_ENABLE_INIT__out_t STBY_CR_ENABLE_INIT;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [6:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__STATIC_ADDR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__STATIC_ADDR_VALID__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [6:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR_VALID__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__STATIC_ADDR__out_t STATIC_ADDR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__STATIC_ADDR_VALID__out_t STATIC_ADDR_VALID;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR__out_t DYNAMIC_ADDR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__DYNAMIC_ADDR_VALID__out_t DYNAMIC_ADDR_VALID;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__SIMPLE_CRR_SUPPORT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__TARGET_XACT_SUPPORT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__DAA_SETAASA_SUPPORT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__DAA_SETDASA_SUPPORT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__DAA_ENTDAA_SUPPORT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__SIMPLE_CRR_SUPPORT__out_t SIMPLE_CRR_SUPPORT;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__TARGET_XACT_SUPPORT__out_t TARGET_XACT_SUPPORT;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__DAA_SETAASA_SUPPORT__out_t DAA_SETAASA_SUPPORT;
@@ -2512,131 +2512,131 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__DAA_ENTDAA_SUPPORT__out_t DAA_ENTDAA_SUPPORT;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CAPABILITIES__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [14:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__PID_HI__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__DCR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [4:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__BCR_VAR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__BCR_FIXED__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__PID_HI__out_t PID_HI;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__DCR__out_t DCR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__BCR_VAR__out_t BCR_VAR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__BCR_FIXED__out_t BCR_FIXED;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_CHAR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__AC_CURRENT_OWN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__SIMPLE_CRR_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__HJ_REQ_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__AC_CURRENT_OWN__out_t AC_CURRENT_OWN;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__SIMPLE_CRR_STATUS__out_t SIMPLE_CRR_STATUS;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__HJ_REQ_STATUS__out_t HJ_REQ_STATUS;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [14:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__PID_HI__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__DCR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [4:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__BCR_VAR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__BCR_FIXED__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__PID_HI__out_t PID_HI;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__DCR__out_t DCR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__BCR_VAR__out_t BCR_VAR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__BCR_FIXED__out_t BCR_FIXED;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_CHAR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO__PID_LO__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO__PID_LO__out_t PID_LO;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_PID_LO__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_REMAIN_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_PRIMED_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_FAIL_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_M3_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__CRR_RESPONSE_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__STBY_CR_DYN_ADDR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_NACKED_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_OK_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__STBY_CR_ACCEPT_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__STBY_CR_OP_RSTACT_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__CCC_PARAM_MODIFIED_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__CCC_UNHANDLED_NACK_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__CCC_FATAL_RSTDAA_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_REMAIN_STAT__out_t ACR_HANDOFF_OK_REMAIN_STAT;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_OK_PRIMED_STAT__out_t ACR_HANDOFF_OK_PRIMED_STAT;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__ACR_HANDOFF_ERR_FAIL_STAT__out_t ACR_HANDOFF_ERR_FAIL_STAT;
@@ -2652,67 +2652,67 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__CCC_FATAL_RSTDAA_ERR_STAT__out_t CCC_FATAL_RSTDAA_ERR_STAT;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO__PID_LO__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO__PID_LO__out_t PID_LO;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRTUAL_DEVICE_PID_LO__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_REMAIN_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_PRIMED_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_FAIL_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_M3_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__CRR_RESPONSE_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_DYN_ADDR_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_NACKED_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_OK_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_ACCEPT_ERR_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__STBY_CR_OP_RSTACT_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__CCC_PARAM_MODIFIED_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__CCC_UNHANDLED_NACK_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__CCC_FATAL_RSTDAA_ERR_SIGNAL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_REMAIN_SIGNAL_EN__out_t ACR_HANDOFF_OK_REMAIN_SIGNAL_EN;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_OK_PRIMED_SIGNAL_EN__out_t ACR_HANDOFF_OK_PRIMED_SIGNAL_EN;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__ACR_HANDOFF_ERR_FAIL_SIGNAL_EN__out_t ACR_HANDOFF_ERR_FAIL_SIGNAL_EN;
@@ -2728,43 +2728,43 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__CCC_FATAL_RSTDAA_ERR_SIGNAL_EN__out_t CCC_FATAL_RSTDAA_ERR_SIGNAL_EN;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_SIGNAL_ENABLE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__CRR_RESPONSE_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_DYN_ADDR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_NACKED_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_OK_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_OP_RSTACT_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__CCC_PARAM_MODIFIED_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__CCC_UNHANDLED_NACK_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__CCC_FATAL_RSTDAA_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__CRR_RESPONSE_FORCE__out_t CRR_RESPONSE_FORCE;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_DYN_ADDR_FORCE__out_t STBY_CR_DYN_ADDR_FORCE;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__STBY_CR_ACCEPT_NACKED_FORCE__out_t STBY_CR_ACCEPT_NACKED_FORCE;
@@ -2776,87 +2776,87 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__CCC_FATAL_RSTDAA_ERR_FORCE__out_t CCC_FATAL_RSTDAA_ERR_FORCE;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_INTR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP1_BUS_CONFIG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [3:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP2_DEV_INTERACT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP1_BUS_CONFIG__out_t F2_CRCAP1_BUS_CONFIG;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__F2_CRCAP2_DEV_INTERACT__out_t F2_CRCAP2_DEV_INTERACT;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_GETCAPS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RST_ACTION__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_PERIPHERAL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_TARGET__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_DYNAMIC_ADDR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RST_ACTION__out_t RST_ACTION;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_PERIPHERAL__out_t RESET_TIME_PERIPHERAL;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_TIME_TARGET__out_t RESET_TIME_TARGET;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__RESET_DYNAMIC_ADDR__out_t RESET_DYNAMIC_ADDR;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CCC_CONFIG_RSTACT_PARAMS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [6:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR_VALID__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [6:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR_VALID__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR__out_t VIRT_STATIC_ADDR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_STATIC_ADDR_VALID__out_t VIRT_STATIC_ADDR_VALID;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR__out_t VIRT_DYNAMIC_ADDR;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__VIRT_DYNAMIC_ADDR_VALID__out_t VIRT_DYNAMIC_ADDR_VALID;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_VIRT_DEVICE_ADDR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL__MWL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL__MWL__out_t MWL;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MWL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL__MRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL__IBIL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL__MRL__out_t MRL;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL__IBIL__out_t IBIL;
     } I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__StdbyCtrlMode__EXTCAP_HEADER__out_t EXTCAP_HEADER;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_CONTROL__out_t STBY_CR_CONTROL;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_DEVICE_ADDR__out_t STBY_CR_DEVICE_ADDR;
@@ -2876,85 +2876,85 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__StdbyCtrlMode__STBY_CR_MRL__out_t STBY_CR_MRL;
     } I3CCSR__I3C_EC__StdbyCtrlMode__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__EXTCAP_HEADER__CAP_ID__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] value;
     } I3CCSR__I3C_EC__TTI__EXTCAP_HEADER__CAP_LENGTH__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__EXTCAP_HEADER__CAP_ID__out_t CAP_ID;
         I3CCSR__I3C_EC__TTI__EXTCAP_HEADER__CAP_LENGTH__out_t CAP_LENGTH;
     } I3CCSR__I3C_EC__TTI__EXTCAP_HEADER__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__CONTROL__HJ_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__CONTROL__CRR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__CONTROL__IBI_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__I3C_EC__TTI__CONTROL__IBI_RETRY_NUM__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__CONTROL__HJ_EN__out_t HJ_EN;
         I3CCSR__I3C_EC__TTI__CONTROL__CRR_EN__out_t CRR_EN;
         I3CCSR__I3C_EC__TTI__CONTROL__IBI_EN__out_t IBI_EN;
         I3CCSR__I3C_EC__TTI__CONTROL__IBI_RETRY_NUM__out_t IBI_RETRY_NUM;
     } I3CCSR__I3C_EC__TTI__CONTROL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__STATUS__PROTOCOL_ERROR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
         logic swacc;
     } I3CCSR__I3C_EC__TTI__STATUS__LAST_IBI_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__STATUS__PROTOCOL_ERROR__out_t PROTOCOL_ERROR;
         I3CCSR__I3C_EC__TTI__STATUS__LAST_IBI_STATUS__out_t LAST_IBI_STATUS;
     } I3CCSR__I3C_EC__TTI__STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__SOFT_RST__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__TX_DESC_RST__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__RX_DESC_RST__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__TX_DATA_RST__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__RX_DATA_RST__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__IBI_QUEUE_RST__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__IBI_RETRY_CTR_RST__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__SOFT_RST__out_t SOFT_RST;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__TX_DESC_RST__out_t TX_DESC_RST;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__RX_DESC_RST__out_t RX_DESC_RST;
@@ -2964,67 +2964,67 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__RESET_CONTROL__IBI_RETRY_CTR_RST__out_t IBI_RETRY_CTR_RST;
     } I3CCSR__I3C_EC__TTI__RESET_CONTROL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DESC_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_TIMEOUT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DESC_TIMEOUT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DATA_THLD_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DATA_THLD_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DESC_THLD_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_THLD_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__IBI_THLD_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__IBI_DONE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [3:0] value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__PENDING_INTERRUPT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__PENDING_IBI__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ABORT_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DESC_COMPLETE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_STAT__out_t RX_DESC_STAT;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TX_DESC_STAT__out_t TX_DESC_STAT;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__RX_DESC_TIMEOUT__out_t RX_DESC_TIMEOUT;
@@ -3042,59 +3042,59 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__TRANSFER_ERR_STAT__out_t TRANSFER_ERR_STAT;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__RX_DESC_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__TX_DESC_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__RX_DESC_TIMEOUT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__TX_DESC_TIMEOUT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__TX_DATA_THLD_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__RX_DATA_THLD_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__TX_DESC_THLD_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__RX_DESC_THLD_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__IBI_THLD_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__IBI_DONE_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__TRANSFER_ABORT_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__TX_DESC_COMPLETE_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__TRANSFER_ERR_STAT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__RX_DESC_STAT_EN__out_t RX_DESC_STAT_EN;
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__TX_DESC_STAT_EN__out_t TX_DESC_STAT_EN;
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__RX_DESC_TIMEOUT_EN__out_t RX_DESC_TIMEOUT_EN;
@@ -3110,59 +3110,59 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__TRANSFER_ERR_STAT_EN__out_t TRANSFER_ERR_STAT_EN;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_ENABLE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__RX_DESC_STAT_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__TX_DESC_STAT_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__RX_DESC_TIMEOUT_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__TX_DESC_TIMEOUT_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__TX_DATA_THLD_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__RX_DATA_THLD_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__TX_DESC_THLD_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__RX_DESC_THLD_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__IBI_THLD_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__IBI_DONE_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__TRANSFER_ABORT_STAT_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__TX_DESC_COMPLETE_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__TRANSFER_ERR_STAT_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__RX_DESC_STAT_FORCE__out_t RX_DESC_STAT_FORCE;
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__TX_DESC_STAT_FORCE__out_t TX_DESC_STAT_FORCE;
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__RX_DESC_TIMEOUT_FORCE__out_t RX_DESC_TIMEOUT_FORCE;
@@ -3178,59 +3178,59 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__TRANSFER_ERR_STAT_FORCE__out_t TRANSFER_ERR_STAT_FORCE;
     } I3CCSR__I3C_EC__TTI__INTERRUPT_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__TE0_ERR_DET_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__TE1_ERR_DET_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__TE2_ERR_DET_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__TE3_ERR_DET_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__TE4_ERR_DET_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__TE5_ERR_DET_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__FRAMING_ERR_DET_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__RI_PEC_ERR_DET_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__RI_LENGTH_ERR_DET_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__RI_READONLY_ERR_DET_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__RI_UNSUPPORTED_ERR_DET_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__RI_RX_FIFO_OVERFLOW_ERR_DET_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__RI_INDIRECT_FIFO_OVERFLOW_ERR_DET_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__TE0_ERR_DET_EN__out_t TE0_ERR_DET_EN;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__TE1_ERR_DET_EN__out_t TE1_ERR_DET_EN;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__TE2_ERR_DET_EN__out_t TE2_ERR_DET_EN;
@@ -3246,59 +3246,59 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__RI_INDIRECT_FIFO_OVERFLOW_ERR_DET_EN__out_t RI_INDIRECT_FIFO_OVERFLOW_ERR_DET_EN;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CTRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE0_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE1_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE2_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE3_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE4_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE5_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__FRAMING_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_PEC_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_LENGTH_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_READONLY_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_UNSUPPORTED_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_RX_FIFO_OVERFLOW_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE0_ERR_STAT__out_t TE0_ERR_STAT;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE1_ERR_STAT__out_t TE1_ERR_STAT;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__TE2_ERR_STAT__out_t TE2_ERR_STAT;
@@ -3314,59 +3314,59 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT__out_t RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__TE0_ERR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__TE1_ERR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__TE2_ERR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__TE3_ERR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__TE4_ERR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__TE5_ERR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__FRAMING_ERR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__RI_PEC_ERR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__RI_LENGTH_ERR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__RI_READONLY_ERR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__RI_UNSUPPORTED_ERR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__RI_RX_FIFO_OVERFLOW_ERR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__RI_INDIRECT_FIFO_OVERFLOW_ERR_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__TE0_ERR_EN__out_t TE0_ERR_EN;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__TE1_ERR_EN__out_t TE1_ERR_EN;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__TE2_ERR_EN__out_t TE2_ERR_EN;
@@ -3382,59 +3382,59 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__RI_INDIRECT_FIFO_OVERFLOW_ERR_EN__out_t RI_INDIRECT_FIFO_OVERFLOW_ERR_EN;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_ENABLE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__TE0_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__TE1_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__TE2_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__TE3_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__TE4_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__TE5_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__FRAMING_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__RI_PEC_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__RI_LENGTH_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__RI_READONLY_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__RI_UNSUPPORTED_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__RI_RX_FIFO_OVERFLOW_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__RI_INDIRECT_FIFO_OVERFLOW_ERR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__TE0_ERR_FORCE__out_t TE0_ERR_FORCE;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__TE1_ERR_FORCE__out_t TE1_ERR_FORCE;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__TE2_ERR_FORCE__out_t TE2_ERR_FORCE;
@@ -3450,116 +3450,116 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__RI_INDIRECT_FIFO_OVERFLOW_ERR_FORCE__out_t RI_INDIRECT_FIFO_OVERFLOW_ERR_FORCE;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_INTR_FORCE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE0__CNT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE0__CNT__out_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE0__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE1__CNT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE1__CNT__out_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE1__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE2__CNT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE2__CNT__out_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE2__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE3__CNT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE3__CNT__out_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE3__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE4__CNT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE4__CNT__out_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE4__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE5__CNT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE5__CNT__out_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_TE5__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_FRAMING__CNT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_FRAMING__CNT__out_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_FRAMING__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_PEC__CNT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_PEC__CNT__out_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_PEC__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_LENGTH__CNT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_LENGTH__CNT__out_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_LENGTH__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_READONLY__CNT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_READONLY__CNT__out_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_READONLY__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_UNSUPPORTED__CNT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_UNSUPPORTED__CNT__out_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_UNSUPPORTED__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_RX_FIFO_OVERFLOW__CNT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_RX_FIFO_OVERFLOW__CNT__out_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_RX_FIFO_OVERFLOW__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_INDIRECT_FIFO_OVERFLOW__CNT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_INDIRECT_FIFO_OVERFLOW__CNT__out_t CNT;
     } I3CCSR__I3C_EC__TTI__TARGET_ERR_CNT_RI_INDIRECT_FIFO_OVERFLOW__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic req;
         logic req_is_wr;
     } I3CCSR__I3C_EC__TTI__RX_DESC_QUEUE_PORT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic req;
         logic req_is_wr;
     } I3CCSR__I3C_EC__TTI__RX_DATA_PORT__out_t;
@@ -3568,7 +3568,7 @@ package I3CCSR_pkg;
         logic [31:0] TX_DESC;
     } I3CCSR__I3C_EC__TTI__TX_DESC_QUEUE_PORT__fields__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic req;
         logic req_is_wr;
         I3CCSR__I3C_EC__TTI__TX_DESC_QUEUE_PORT__fields__out_t wr_data;
@@ -3579,7 +3579,7 @@ package I3CCSR_pkg;
         logic [31:0] TX_DATA;
     } I3CCSR__I3C_EC__TTI__TX_DATA_PORT__fields__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic req;
         logic req_is_wr;
         I3CCSR__I3C_EC__TTI__TX_DATA_PORT__fields__out_t wr_data;
@@ -3590,89 +3590,89 @@ package I3CCSR_pkg;
         logic [31:0] IBI_DATA;
     } I3CCSR__I3C_EC__TTI__IBI_PORT__fields__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic req;
         logic req_is_wr;
         I3CCSR__I3C_EC__TTI__IBI_PORT__fields__out_t wr_data;
         I3CCSR__I3C_EC__TTI__IBI_PORT__fields__out_t wr_biten;
     } I3CCSR__I3C_EC__TTI__IBI_PORT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__QUEUE_SIZE__RX_DESC_BUFFER_SIZE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__QUEUE_SIZE__TX_DESC_BUFFER_SIZE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__QUEUE_SIZE__RX_DATA_BUFFER_SIZE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__QUEUE_SIZE__TX_DATA_BUFFER_SIZE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__QUEUE_SIZE__RX_DESC_BUFFER_SIZE__out_t RX_DESC_BUFFER_SIZE;
         I3CCSR__I3C_EC__TTI__QUEUE_SIZE__TX_DESC_BUFFER_SIZE__out_t TX_DESC_BUFFER_SIZE;
         I3CCSR__I3C_EC__TTI__QUEUE_SIZE__RX_DATA_BUFFER_SIZE__out_t RX_DATA_BUFFER_SIZE;
         I3CCSR__I3C_EC__TTI__QUEUE_SIZE__TX_DATA_BUFFER_SIZE__out_t TX_DATA_BUFFER_SIZE;
     } I3CCSR__I3C_EC__TTI__QUEUE_SIZE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TTI__IBI_QUEUE_SIZE__IBI_QUEUE_SIZE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__IBI_QUEUE_SIZE__IBI_QUEUE_SIZE__out_t IBI_QUEUE_SIZE;
     } I3CCSR__I3C_EC__TTI__IBI_QUEUE_SIZE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
         logic swmod;
     } I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__TX_DESC_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
         logic swmod;
     } I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__RX_DESC_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
         logic swmod;
     } I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__IBI_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__TX_DESC_THLD__out_t TX_DESC_THLD;
         I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__RX_DESC_THLD__out_t RX_DESC_THLD;
         I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__IBI_THLD__out_t IBI_THLD;
     } I3CCSR__I3C_EC__TTI__QUEUE_THLD_CTRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL__TX_DATA_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL__RX_DATA_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL__TX_START_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [2:0] value;
     } I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL__RX_START_THLD__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL__TX_DATA_THLD__out_t TX_DATA_THLD;
         I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL__RX_DATA_THLD__out_t RX_DATA_THLD;
         I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL__TX_START_THLD__out_t TX_START_THLD;
         I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL__RX_START_THLD__out_t RX_START_THLD;
     } I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TTI__EXTCAP_HEADER__out_t EXTCAP_HEADER;
         I3CCSR__I3C_EC__TTI__CONTROL__out_t CONTROL;
         I3CCSR__I3C_EC__TTI__STATUS__out_t STATUS;
@@ -3708,122 +3708,122 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TTI__DATA_BUFFER_THLD_CTRL__out_t DATA_BUFFER_THLD_CTRL;
     } I3CCSR__I3C_EC__TTI__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__EXTCAP_HEADER__CAP_ID__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__EXTCAP_HEADER__CAP_LENGTH__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__EXTCAP_HEADER__CAP_ID__out_t CAP_ID;
         I3CCSR__I3C_EC__SoCMgmtIf__EXTCAP_HEADER__CAP_LENGTH__out_t CAP_LENGTH;
     } I3CCSR__I3C_EC__SoCMgmtIf__EXTCAP_HEADER__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_CONTROL__PLACEHOLDER__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_CONTROL__PLACEHOLDER__out_t PLACEHOLDER;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_CONTROL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_STATUS__PLACEHOLDER__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_STATUS__PLACEHOLDER__out_t PLACEHOLDER;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_STATUS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__REC_INTF_BYPASS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__REC_PAYLOAD_DONE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__REC_INTF_BYPASS__out_t REC_INTF_BYPASS;
         I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__REC_PAYLOAD_DONE__out_t REC_PAYLOAD_DONE;
     } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_CFG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
         logic swmod;
     } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__DEVICE_RESET_CTRL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
         logic swmod;
     } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__RECOVERY_CTRL_ACTIVATE_REC_IMG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
         logic swmod;
     } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__INDIRECT_FIFO_CTRL_RESET__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__DEVICE_RESET_CTRL__out_t DEVICE_RESET_CTRL;
         I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__RECOVERY_CTRL_ACTIVATE_REC_IMG__out_t RECOVERY_CTRL_ACTIVATE_REC_IMG;
         I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__INDIRECT_FIFO_CTRL_RESET__out_t INDIRECT_FIFO_CTRL_RESET;
     } I3CCSR__I3C_EC__SoCMgmtIf__REC_INTF_REG_W1C_ACCESS__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_2__PLACEHOLDER__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_2__PLACEHOLDER__out_t PLACEHOLDER;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_2__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3__PLACEHOLDER__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3__PLACEHOLDER__out_t PLACEHOLDER;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_RSVD_3__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__INPUT_ENABLE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__SCHMITT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__KEEPER_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__PULL_DIR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__PULL_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__IO_INVERSION__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__OD_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__VIRTUAL_OD_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__PAD_TYPE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__INPUT_ENABLE__out_t INPUT_ENABLE;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__SCHMITT_EN__out_t SCHMITT_EN;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__KEEPER_EN__out_t KEEPER_EN;
@@ -3835,148 +3835,148 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__PAD_TYPE__out_t PAD_TYPE;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_CONF__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR__DRIVE_SLEW_RATE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR__DRIVE_STRENGTH__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR__DRIVE_SLEW_RATE__out_t DRIVE_SLEW_RATE;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR__DRIVE_STRENGTH__out_t DRIVE_STRENGTH;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_PAD_ATTR__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_2__PLACEHOLDER__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_2__PLACEHOLDER__out_t PLACEHOLDER;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_2__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3__PLACEHOLDER__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3__PLACEHOLDER__out_t PLACEHOLDER;
     } I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_FEATURE_3__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG__T_R__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG__T_R__out_t T_R;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_R_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG__T_F__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG__T_F__out_t T_F;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_F_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG__T_SU_DAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG__T_SU_DAT__out_t T_SU_DAT;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_DAT_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG__T_HD_DAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG__T_HD_DAT__out_t T_HD_DAT;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_DAT_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG__T_HIGH__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG__T_HIGH__out_t T_HIGH;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_HIGH_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG__T_LOW__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG__T_LOW__out_t T_LOW;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_LOW_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG__T_HD_STA__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG__T_HD_STA__out_t T_HD_STA;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_HD_STA_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG__T_SU_STA__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG__T_SU_STA__out_t T_SU_STA;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STA_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__T_SU_STO__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__T_SU_STO__out_t T_SU_STO;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_SU_STO_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG__T_FREE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG__T_FREE__out_t T_FREE;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_FREE_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG__T_AVAL__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG__T_AVAL__out_t T_AVAL;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_AVAL_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [31:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG__T_IDLE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG__T_IDLE__out_t T_IDLE;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_IDLE_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic value;
     } I3CCSR__I3C_EC__SoCMgmtIf__HDR_TIMEOUT_EN_REG__HDR_TIMEOUT_EN__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__HDR_TIMEOUT_EN_REG__HDR_TIMEOUT_EN__out_t HDR_TIMEOUT_EN;
     } I3CCSR__I3C_EC__SoCMgmtIf__HDR_TIMEOUT_EN_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [19:0] value;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_HDR_TIMEOUT_REG__T_HDR_TIMEOUT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__T_HDR_TIMEOUT_REG__T_HDR_TIMEOUT__out_t T_HDR_TIMEOUT;
     } I3CCSR__I3C_EC__SoCMgmtIf__T_HDR_TIMEOUT_REG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SoCMgmtIf__EXTCAP_HEADER__out_t EXTCAP_HEADER;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_CONTROL__out_t SOC_MGMT_CONTROL;
         I3CCSR__I3C_EC__SoCMgmtIf__SOC_MGMT_STATUS__out_t SOC_MGMT_STATUS;
@@ -4004,46 +4004,46 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__SoCMgmtIf__T_HDR_TIMEOUT_REG__out_t T_HDR_TIMEOUT_REG;
     } I3CCSR__I3C_EC__SoCMgmtIf__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__CtrlCfg__EXTCAP_HEADER__CAP_ID__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] value;
     } I3CCSR__I3C_EC__CtrlCfg__EXTCAP_HEADER__CAP_LENGTH__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__CtrlCfg__EXTCAP_HEADER__CAP_ID__out_t CAP_ID;
         I3CCSR__I3C_EC__CtrlCfg__EXTCAP_HEADER__CAP_LENGTH__out_t CAP_LENGTH;
     } I3CCSR__I3C_EC__CtrlCfg__EXTCAP_HEADER__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [1:0] value;
     } I3CCSR__I3C_EC__CtrlCfg__CONTROLLER_CONFIG__OPERATION_MODE__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__CtrlCfg__CONTROLLER_CONFIG__OPERATION_MODE__out_t OPERATION_MODE;
     } I3CCSR__I3C_EC__CtrlCfg__CONTROLLER_CONFIG__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__CtrlCfg__EXTCAP_HEADER__out_t EXTCAP_HEADER;
         I3CCSR__I3C_EC__CtrlCfg__CONTROLLER_CONFIG__out_t CONTROLLER_CONFIG;
     } I3CCSR__I3C_EC__CtrlCfg__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [7:0] value;
     } I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER__CAP_ID__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic [15:0] value;
     } I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER__CAP_LENGTH__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER__CAP_ID__out_t CAP_ID;
         I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER__CAP_LENGTH__out_t CAP_LENGTH;
     } I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3C_EC__SecFwRecoveryIf__out_t SecFwRecoveryIf;
         I3CCSR__I3C_EC__StdbyCtrlMode__out_t StdbyCtrlMode;
         I3CCSR__I3C_EC__TTI__out_t TTI;
@@ -4052,7 +4052,7 @@ package I3CCSR_pkg;
         I3CCSR__I3C_EC__TERMINATION_EXTCAP_HEADER__out_t TERMINATION_EXTCAP_HEADER;
     } I3CCSR__I3C_EC__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic req;
         logic [9:0] addr;
         logic req_is_wr;
@@ -4060,7 +4060,7 @@ package I3CCSR_pkg;
         logic [31:0] wr_biten;
     } I3CCSR__DAT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         logic req;
         logic [10:0] addr;
         logic req_is_wr;
@@ -4068,7 +4068,7 @@ package I3CCSR_pkg;
         logic [31:0] wr_biten;
     } I3CCSR__DCT__out_t;
 
-    typedef struct packed{
+    typedef struct {
         I3CCSR__I3CBase__out_t I3CBase;
         I3CCSR__PIOControl__out_t PIOControl;
         I3CCSR__I3C_EC__out_t I3C_EC;

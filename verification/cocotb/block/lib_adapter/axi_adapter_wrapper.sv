@@ -198,8 +198,6 @@ module axi_adapter_wrapper
   I3CCSR__in_t  hwif_in;
   I3CCSR__out_t hwif_out;
 
-  assign hwif_in.rst_ni = areset_n;
-
   // Connect to I3C CSRs to test SW access
   I3CCSR i3c_csr (
       .clk(aclk),
@@ -251,75 +249,23 @@ module axi_adapter_wrapper
       .err_o(unused_err)
   );
 
-  // TODO: These write-enable signals were not combo-driven or initialized on reset.
-  // This is a placeholder driver. They require either unimplemented drivers or changes in RDL.
-  always_comb begin : missing_csr_we_inits
-    hwif_in.I3CBase.HC_CONTROL.RESUME.we = 0;
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR.we = 0;
-    hwif_in.I3CBase.CONTROLLER_DEVICE_ADDR.DYNAMIC_ADDR_VALID.we = 0;
-    hwif_in.I3CBase.RESET_CONTROL.SOFT_RST.we = 0;
-    hwif_in.I3CBase.DCT_SECTION_OFFSET.TABLE_INDEX.we = 0;
-    hwif_in.I3CBase.IBI_DATA_ABORT_CTRL.IBI_DATA_ABORT_MON.we = 0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.we = 0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.TARGET_XACT_ENABLE.we = 0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETAASA_ENABLE.we = 0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_SETDASA_ENABLE.we = 0;
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.DAA_ENTDAA_ENABLE.we = 0;
-    hwif_in.I3C_EC.TTI.RESET_CONTROL.SOFT_RST.we = 0;
-    hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DATA_RST.we = 0;
-    hwif_in.I3C_EC.CtrlCfg.CONTROLLER_CONFIG.OPERATION_MODE.we = 0;
-
-    hwif_in.I3CBase.HC_CONTROL.BUS_ENABLE.we = 0;
-
-    hwif_in.I3CBase.RESET_CONTROL.CMD_QUEUE_RST.we = 0;
-    hwif_in.I3CBase.RESET_CONTROL.RESP_QUEUE_RST.we = 0;
-    hwif_in.I3CBase.RESET_CONTROL.TX_FIFO_RST.we = 0;
-    hwif_in.I3CBase.RESET_CONTROL.RX_FIFO_RST.we = 0;
-    hwif_in.I3CBase.RESET_CONTROL.IBI_QUEUE_RST.we = 0;
-    hwif_in.PIOControl.QUEUE_THLD_CTRL.CMD_EMPTY_BUF_THLD.we = 0;
-    hwif_in.PIOControl.QUEUE_THLD_CTRL.RESP_BUF_THLD.we = 0;
-    hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DESC_RST.we = 0;
-    hwif_in.I3C_EC.TTI.RESET_CONTROL.RX_DESC_RST.we = 0;
-    hwif_in.I3C_EC.TTI.RESET_CONTROL.TX_DATA_RST.we = 0;
-    hwif_in.I3C_EC.TTI.RESET_CONTROL.IBI_QUEUE_RST.we = 0;
-    hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.TX_DESC_THLD.we = 0;
-    hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.RX_DESC_THLD.we = 0;
-    hwif_in.I3C_EC.TTI.QUEUE_THLD_CTRL.IBI_THLD.we = 0;
-  end : missing_csr_we_inits
-
-  always_comb begin : other_uninit_signals
-    hwif_in.I3C_EC.StdbyCtrlMode.STBY_CR_CONTROL.HANDOFF_DEEP_SLEEP.hwclr = 0;
-
-    // Unhandled wr/rd_ack (drivers are not included in this wrapper)
-    hwif_in.PIOControl.COMMAND_PORT.wr_ack = 0;
-    hwif_in.PIOControl.RESPONSE_PORT.rd_ack = 0;
-    hwif_in.PIOControl.TX_DATA_PORT.wr_ack = 0;
-    hwif_in.PIOControl.RX_DATA_PORT.rd_ack = 0;
-    hwif_in.PIOControl.IBI_PORT.rd_ack = 0;
-    hwif_in.I3C_EC.TTI.RX_DESC_QUEUE_PORT.rd_ack = 0;
-    hwif_in.I3C_EC.TTI.RX_DATA_PORT.rd_ack = 0;
-    hwif_in.I3C_EC.TTI.TX_DESC_QUEUE_PORT.wr_ack = 0;
-    hwif_in.I3C_EC.TTI.IBI_PORT.wr_ack = 0;
-
-    // Unhandled wr/rd_ack (drivers are mising)
-    hwif_in.DAT.rd_ack = 0;
-    hwif_in.DAT.wr_ack = 0;
-    hwif_in.DCT.rd_ack = 0;
-    hwif_in.DCT.wr_ack = 0;
-  end : other_uninit_signals
-
   logic wr_ack_q, rd_ack_q;
   logic fifo_rready_q, fifo_wvalid_q;
   logic [31:0] fifo_rdata_q, fifo_wdata_q;
 
+  always_comb begin : connect_csr_hwif
+    hwif_in = '0;
+    hwif_in.rst_ni = areset_n;
+    hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack = wr_ack_q;
+    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_ack = rd_ack_q;
+    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_data = rd_ack_q ? fifo_rdata_q : '0;
+  end
+
   always_comb begin : connect_inidrect_fifo
     fifo_wvalid = fifo_wvalid_q;
     fifo_wdata = fifo_wdata_q;
-    hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack = wr_ack_q;
 
     fifo_rready = fifo_rready_q;
-    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_data = fifo_rdata_q;
-    hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_ack = rd_ack_q;
   end
 
   always_ff @(posedge aclk or negedge areset_n) begin : stall_fifo_access

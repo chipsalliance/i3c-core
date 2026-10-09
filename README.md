@@ -45,8 +45,30 @@ if you already cloned the repository.
 A bootstrap script is provided, runnable as `./install.sh` which will install `pyenv`.
 Then, you can install and activate a python environment with `. activate.sh`.
 
-The activation script creates a virtual environment with Python3.11 and installs python packages from the `requirements.txt` file.
+The activation script creates a virtual environment with Python 3.11 and installs packages from `uv.lock`.
 Python 3.11.0 is recommended and installed for this project.
+
+For pip-only environments, including CI workers without uv, run from the repository root:
+
+```bash
+python3.11 -m venv .venv
+.venv/bin/python -m pip install --use-pep517 -r requirements.txt
+.venv/bin/python -m pip check
+export VIRTUAL_ENV="$PWD/.venv"
+export PATH="$VIRTUAL_ENV/bin:$PATH"
+export I3C_ROOT_DIR="$PWD"
+export CALIPTRA_ROOT="$PWD/third_party/caliptra-rtl"
+```
+
+`requirements.txt` is generated from the authoritative `pyproject.toml` and `uv.lock`.
+When changing dependencies, update the lockfile and regenerate the pip export locally:
+
+```bash
+uv export --locked --format requirements.txt --no-hashes --no-emit-project --output-file requirements.txt
+```
+
+uv is only needed to maintain the export, not to install it. Keep pip build isolation
+enabled; do not preinstall unpinned build backends or rewrite virtualenv script shebangs.
 
 ## Verification
 

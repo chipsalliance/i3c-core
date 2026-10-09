@@ -94,6 +94,16 @@ async def test_dat_csr_access(dut):
     tb = await initialize(dut)
     await run_basic_csr_access(tb, tb.reg_map.DAT)
 
+    base_addr = tb.reg_map.DAT.DAT_MEMORY.base_addr
+    words = [0x01234567, 0x89ABCDEF, 0xFEDCBA98, 0x76543210]
+    for index, word in enumerate(words):
+        await tb.write_csr(base_addr + 4 * index, int2dword(word), 4)
+    for index, word in enumerate(words):
+        addr = base_addr + 4 * index
+        compare_values(int2dword(word), await tb.read_csr(addr), addr)
+        # Let ERR_HWIF_IN sample idle responses between reads.
+        await Timer(20, units="ns")
+
     await tb.teardown()
 
 

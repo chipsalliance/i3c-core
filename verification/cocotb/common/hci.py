@@ -190,6 +190,13 @@ class HCIBaseTestInterface:
         # self.log.setLevel("DEBUG")
 
     async def _setup(self, busIfType: FrontBusTestInterface):
+        for name in (
+            "rst_action_i", "bus_start_i", "bus_stop_i", "bus_addr_i", "bus_addr_valid_i",
+            "tti_rx_flush_i", "tti_tx_flush_i", "tti_tx_host_nack_i",
+            "hci_resp_wdata_i", "hci_rx_wdata_i", "hci_ibi_wdata_i",
+            "tti_rx_desc_wdata_i", "tti_rx_wdata_i", "tti_ibi_wr_data_i",
+        ):
+            getattr(self.dut, name).value = 0
         self.busIf = busIfType(self.dut)
         self.clk = self.busIf.clk
         self.rst_n = self.busIf.rst_n

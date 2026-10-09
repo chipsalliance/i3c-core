@@ -98,12 +98,14 @@ module dxt
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
       csr_dat_hwif_o.rd_data <= '0;
-    end else begin
+    end else if (dat_rd_ack) begin
       case (dat_word_index_sw)
         1'd0: csr_dat_hwif_o.rd_data <= dat_mem_src_i.rdata[31:0];
         1'd1: csr_dat_hwif_o.rd_data <= dat_mem_src_i.rdata[63:32];
         default: csr_dat_hwif_o.rd_data <= '0;
       endcase
+    end else begin
+      csr_dat_hwif_o.rd_data <= '0;
     end
   end
 
@@ -164,7 +166,7 @@ module dxt
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
       csr_dct_hwif_o.rd_data <= '0;
-    end else begin
+    end else if (dct_rd_ack) begin
       case (dct_word_index_sw)
         2'd0: csr_dct_hwif_o.rd_data <= dct_mem_src_i.rdata[31:0];
         2'd1: csr_dct_hwif_o.rd_data <= dct_mem_src_i.rdata[63:32];
@@ -172,6 +174,8 @@ module dxt
         2'd3: csr_dct_hwif_o.rd_data <= dct_mem_src_i.rdata[127:96];
         default: csr_dct_hwif_o.rd_data <= '0;
       endcase
+    end else begin
+      csr_dct_hwif_o.rd_data <= '0;
     end
   end
 
