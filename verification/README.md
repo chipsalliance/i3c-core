@@ -63,6 +63,9 @@ Before each build, the Makefiles generate `i3c_tb_cfg_pkg.sv` from the selected
 YAML profile. Wrappers pass its constants to the RTL using explicit parameter
 overrides. Both AXI and AHB top-level ports are always present; `UseAxi` selects
 the active frontend. The test wrapper ties the unused bus inputs inactive.
+Clock-driven monitors receive the selected frontend clock from
+`I3CTopTestInterface.clk`; port presence cannot identify the active bus because
+both clock ports exist.
 An unchanged configuration does not force a rebuild for Python-only test changes.
 Each `SIM_BUILD` retains `i3c_tb_cfg_pkg.sv` and `i3c_build_config.txt` identifying the
 selected profile, configuration file, and compile flags; both are also printed

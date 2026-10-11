@@ -27,8 +27,9 @@ class TtiQueueMonitor:
     _TTI = "xi3c_wrapper.i3c.xtti"
     _REC = "xi3c_wrapper.i3c.xrecovery_handler"
 
-    def __init__(self, dut):
+    def __init__(self, dut, clk):
         self.dut = dut
+        self._clk = clk
         self._normal_write_count = 0
         self._running = False
 
@@ -38,14 +39,6 @@ class TtiQueueMonitor:
         self._rx_desc_write_r = tti.rx_desc_queue_write_r
         self._rx_data_write_r = tti.rx_data_queue_write_r
         self._recovery_pending = rec.recovery_pending
-
-        # Resolve clock for re-sampling
-        if hasattr(dut, 'aclk'):
-            self._clk = dut.aclk
-        elif hasattr(dut, 'hclk'):
-            self._clk = dut.hclk
-        else:
-            self._clk = None
 
     async def run(self):
         """Main monitor loop — start with cocotb.start_soon().
@@ -63,8 +56,7 @@ class TtiQueueMonitor:
 
             # Re-sample on the next clock edge to confirm recovery_pending
             # is truly stable-high (not just de-asserting on this same edge)
-            if self._clk is not None:
-                await RisingEdge(self._clk)
+            await RisingEdge(self._clk)
 
             desc_w = int(self._rx_desc_write_r.value)
             data_w = int(self._rx_data_write_r.value)

@@ -52,7 +52,7 @@ class I3CTopTestInterface:
 
         # Start TtiQueueMonitor for every test
         try:
-            self.tti_monitor = TtiQueueMonitor(self.dut)
+            self.tti_monitor = TtiQueueMonitor(self.dut, self.clk)
             cocotb.start_soon(self.tti_monitor.run())
         except AttributeError:
             self.dut._log.warning("TtiQueueMonitor: required signals not found, skipping")
@@ -60,7 +60,7 @@ class I3CTopTestInterface:
 
         # Start I3C Bus Monitor for every test
         try:
-            self.bus_monitor = I3cBusMonitor(self.dut)
+            self.bus_monitor = I3cBusMonitor(self.dut, self.clk)
             if self.bus_monitor.is_available():
                 await self.bus_monitor.start()
             else:
@@ -72,7 +72,7 @@ class I3CTopTestInterface:
 
         # Start TE Error Monitors for every test
         try:
-            self.te_error_monitor = TeErrorEventMonitor(self.dut)
+            self.te_error_monitor = TeErrorEventMonitor(self.dut, self.clk)
             cocotb.start_soon(self.te_error_monitor.run())
         except (AttributeError, Exception) as e:
             self.dut._log.warning(f"TeErrorEventMonitor: failed to start: {e}")
@@ -86,7 +86,7 @@ class I3CTopTestInterface:
             self.hdr_recovery_monitor = None
 
         try:
-            self.te2_integrity_monitor = PostTe2DataIntegrityMonitor(self.dut)
+            self.te2_integrity_monitor = PostTe2DataIntegrityMonitor(self.dut, self.clk)
             cocotb.start_soon(self.te2_integrity_monitor.run())
         except (AttributeError, Exception) as e:
             self.dut._log.warning(f"PostTe2DataIntegrityMonitor: failed to start: {e}")

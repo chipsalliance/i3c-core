@@ -103,7 +103,7 @@ Tools used for the core verification are:
 
 Tools developed for this project are located in `tools` directory.
 You can find more detailed information in README of each tool:
-- [`i3c_config`](./tools/i3c_config/README.md) - manage configuration and produce header files
+- [`i3c_config`](./tools/i3c_config/README.md) - manage YAML profiles and generate testbench configuration packages for RTL parameter overrides
 - [`reg_gen`](./tools/reg_gen/README.md) - scripts to generate SystemVerilog description from the SystemRDL files
 - [`timing`](./tools/timing/README.md) - helper script to estimate timings on the bus
 - [`verible-scripts`](./tools/verible-scripts/README.md) - scripts to manage configuration and runs of Verible formatter and linter

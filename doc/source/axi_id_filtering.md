@@ -2,26 +2,33 @@
 
 In order to facilitate constraining the recovery core's accessibility, the I3C core implements an AXI transaction ID filtering mechanism.
 
-Transaction IDs are passed using the `aruser` and `awuser` signals.
+The identities used for access filtering are passed using the `aruser` and `awuser` signals, not the AXI transaction ID signals `arid` and `awid`.
 
-The ID filtering logic is optional and depends on the `AXI_ID_FILTERING` macro definition.
+## Parameters
 
-Recovery core configuration includes a parameter denoting the `NUM_PRIV_IDS` - number of privileged IDs that are granted read and write access when the filtering mechanism is enabled.
+The AXI adapter's filtering logic is selected by the `EnableIdFiltering` parameter, passed through `i3c_wrapper`. The relevant parameters are:
 
-Having `AXI_ID_FILTERING` defined requires `NUM_PRIV_IDS` to be greater than 0. This is verified with an assertion.
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `EnableIdFiltering` | `1` | Include the filtering logic in the AXI adapter. |
+| `NumPrivIds` | `4` | Number of privileged-ID entries granted read and write access. |
+| `AxiUserWidth` | `32` | Width in bits of each privileged-ID entry and the AXI USER fields. |
 
-Undefined `AXI_ID_FILTERING` and non-zero `NUM_PRIV_IDS` are considered a legal configuration and causes the ID filtering logic **to not be included** in the design.
+`NumPrivIds` must be greater than zero when filtering is enabled. Integrators must satisfy this constraint.
+
+With `EnableIdFiltering=0`, the filtering logic is not included and the adapter does not reject requests based on their USER value. This parameter is an elaboration-time choice, distinct from the runtime disable input. The inputs remain present even when filtering is disabled or the AHB frontend is selected.
+
+## Runtime controls
 
 The filtering mechanism is controlled via:
 
-* `disable_axi_filtering_i` recovery core port to disable the filtering mechanism
+* `disable_id_filtering_i` input to disable the filtering mechanism when `EnableIdFiltering=1`
    * `1'b0` - enable AXI filtering
    * `1'b1` - disable AXI filtering
-* `[0:AXI_ID_WIDTH-1] priv_ids_i [0:NUM_PRIV_IDS-1]` recovery core port containing privileged IDs
-   * Each privileged ID should be of width `AXI_ID_WIDTH` passed at `priv_ids_i[k]` for each **k** in **{0 … NUM_PRIV_IDS - 1}**
-   * All `NUM_PRIV_IDS` entries are expected to be set to valid privileged IDs
+* `logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds]` input array containing privileged IDs
+   * Entry `priv_ids_i[k]` supplies an authorized USER value for each index from 0 through `NumPrivIds - 1`.
+   * All `NumPrivIds` entries must contain valid privileged IDs when filtering is enabled. There is no per-entry valid mask; repeat an authorized ID in spare slots rather than inserting zero unless USER value zero is intentionally authorized.
 
 When the filtering is enabled, any transaction attempt outside of the privileged IDs will be met with a `SLVERR` (`0b10`) error on the respective AXI response channel.
 
-The above-mentioned `disable_axi_filtering_i` and `priv_ids_i` ports will not be included in the design if `AXI_ID_FILTERING` is not defined.
-
+The `disable_id_filtering_i` and `priv_ids_i` inputs are ignored when `EnableIdFiltering=0` or `UseAxi=0`. Keep unused inputs tied to known values; disabling the feature does not remove its ports.
