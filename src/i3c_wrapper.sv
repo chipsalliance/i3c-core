@@ -1,21 +1,25 @@
 // SPDX-License-Identifier: Apache-2.0
-`include "i3c_defines.svh"
-
 module i3c_wrapper #(
-`ifdef I3C_USE_AHB
-    parameter int unsigned AhbDataWidth = `AHB_DATA_WIDTH,
-    parameter int unsigned AhbAddrWidth = `AHB_ADDR_WIDTH,
-`elsif I3C_USE_AXI
-    parameter int unsigned AxiDataWidth = `AXI_DATA_WIDTH,
-    parameter int unsigned AxiAddrWidth = `AXI_ADDR_WIDTH,
-    parameter int unsigned AxiUserWidth = `AXI_USER_WIDTH,
-    parameter int unsigned AxiIdWidth = `AXI_ID_WIDTH,
-`ifdef AXI_ID_FILTERING
-    parameter int unsigned NumPrivIds = `NUM_PRIV_IDS,
-`endif
-`endif
-    parameter int unsigned DatAw = i3c_pkg::DatAw,
-    parameter int unsigned DctAw = i3c_pkg::DctAw,
+    parameter bit UseAxi = 1'b1,
+    parameter int unsigned AhbDataWidth = 64,
+    parameter int unsigned AhbAddrWidth = 18,
+    parameter int unsigned AxiDataWidth = 32,
+    parameter int unsigned AxiAddrWidth = 12,
+    parameter int unsigned AxiUserWidth = 32,
+    parameter int unsigned AxiIdWidth = 8,
+    parameter bit EnableIdFiltering = 1'b1,
+    parameter int unsigned NumPrivIds = 4,
+    parameter int unsigned CmdFifoDepth = 64,
+    parameter int unsigned RespFifoDepth = 64,
+    parameter int unsigned RxFifoDepth = 64,
+    parameter int unsigned TxFifoDepth = 64,
+    parameter int unsigned IbiFifoDepth = 64,
+    parameter bit IbiFifoExtSize = 1'b0,
+    parameter int unsigned DatDepth = 128,
+    parameter int unsigned DctDepth = 128,
+    parameter bit DisableLoopback = 1'b0,
+    parameter int unsigned DatAw = $clog2(DatDepth),
+    parameter int unsigned DctAw = $clog2(DctDepth),
 
     parameter int unsigned CsrAddrWidth = I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH,
     parameter int unsigned CsrDataWidth = I3CCSR_pkg::I3CCSR_DATA_WIDTH
@@ -23,7 +27,6 @@ module i3c_wrapper #(
     input clk_i,  // clock
     input rst_ni, // active low reset
 
-`ifdef I3C_USE_AHB
     // AHB-Lite interface
     // Byte address of the transfer
     input  logic [  AhbAddrWidth-1:0] haddr_i,
@@ -52,18 +55,14 @@ module i3c_wrapper #(
     // Indicates all subordinates have finished transfers
     input  logic                      hready_i,
 
-`elsif I3C_USE_AXI
     // AXI4 subordinate interface
     // Must be parameterized with AW=AxiAddrWidth, DW=AxiDataWidth,
     // UW=AxiUserWidth and IW=AxiIdWidth
     axi_if.w_sub s_axi_w_if,
     axi_if.r_sub s_axi_r_if,
 
-`ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
     input logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds],
-`endif
-`endif
 
     // I3C bus driver signals
     input  logic scl_i,
@@ -95,18 +94,29 @@ module i3c_wrapper #(
   i3c_pkg::dct_mem_sink_t dct_mem_sink;
 
   i3c #(
-`ifdef I3C_USE_AHB
+      .UseAxi(UseAxi),
       .AhbDataWidth(AhbDataWidth),
       .AhbAddrWidth(AhbAddrWidth),
-`elsif I3C_USE_AXI
       .AxiDataWidth(AxiDataWidth),
       .AxiAddrWidth(AxiAddrWidth),
       .AxiUserWidth(AxiUserWidth),
       .AxiIdWidth(AxiIdWidth),
-`endif
-`ifdef AXI_ID_FILTERING
+      .EnableIdFiltering(EnableIdFiltering),
       .NumPrivIds(NumPrivIds),
-`endif
+      .HciCmdFifoDepth(CmdFifoDepth),
+      .HciRespFifoDepth(RespFifoDepth),
+      .HciRxFifoDepth(RxFifoDepth),
+      .HciTxFifoDepth(TxFifoDepth),
+      .HciIbiFifoDepth(IbiFifoDepth * (IbiFifoExtSize ? 8 : 1)),
+      .TtiTxDescFifoDepth(CmdFifoDepth),
+      .TtiRxDescFifoDepth(RespFifoDepth),
+      .TtiRxFifoDepth(RxFifoDepth),
+      .TtiTxFifoDepth(TxFifoDepth),
+      .TtiIbiFifoDepth(IbiFifoDepth * (IbiFifoExtSize ? 8 : 1)),
+      .IbiFifoExtSize(IbiFifoExtSize),
+      .DatDepth(DatDepth),
+      .DctDepth(DctDepth),
+      .DisableLoopback(DisableLoopback),
       .CsrDataWidth(CsrDataWidth),
       .CsrAddrWidth(CsrAddrWidth),
       .DatAw(DatAw),
@@ -115,7 +125,6 @@ module i3c_wrapper #(
       .clk_i,
       .rst_ni,
 
-`ifdef I3C_USE_AHB
       .haddr_i,
       .hburst_i,
       .hprot_i,
@@ -129,15 +138,11 @@ module i3c_wrapper #(
       .hresp_o,
       .hsel_i,
       .hready_i,
-`elsif I3C_USE_AXI
       // AXI4 subordinate interface
       .s_axi_w_if(s_axi_w_if),
       .s_axi_r_if(s_axi_r_if),
-`ifdef AXI_ID_FILTERING
       .disable_id_filtering_i(disable_id_filtering_i),
       .priv_ids_i(priv_ids_i),
-`endif
-`endif
 
       .i3c_scl_i   (scl_i),
       .i3c_scl_o   (scl_o),
@@ -162,7 +167,7 @@ module i3c_wrapper #(
   );
 
   prim_ram_1p_adv #(
-      .Depth(`DAT_DEPTH),
+      .Depth(DatDepth),
       .Width(64),
       .DataBitsPerMask(32)
   ) dat_memory (
@@ -180,7 +185,7 @@ module i3c_wrapper #(
   );
 
   prim_ram_1p_adv #(
-      .Depth(`DCT_DEPTH),
+      .Depth(DctDepth),
       .Width(128),
       .DataBitsPerMask(32)
   ) dct_memory (

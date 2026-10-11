@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
-`include "i3c_defines.svh"
 
 module descriptor_tx_test_wrapper
   import i3c_pkg::*;
 #(
-  localparam int unsigned TtiTxFifoDepthWidth = $clog2(`TX_FIFO_DEPTH + 1)
+  parameter int unsigned TxFifoDepth = i3c_tb_cfg_pkg::TxFifoDepth,
+  localparam int unsigned TtiTxFifoDepthWidth = $clog2(TxFifoDepth + 1)
 ) (
   input  logic clk_i,
   input  logic rst_ni,

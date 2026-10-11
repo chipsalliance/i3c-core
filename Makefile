@@ -75,12 +75,14 @@ CFG_GEN   = $(TOOL_DIR)/i3c_config/i3c_core_config.py
 ## YAML file holding valid configuration sets for the I3C RTL
 CFG_FILE ?= $(I3C_ROOT_DIR)/i3c_core_configs.yaml
 ## Selected configuration to use from CFG_FILE
-CFG_NAME ?= ahb
+CFG_NAME ?= axi_bypass
+TB_CFG_PKG ?= $(I3C_ROOT_DIR)/build/$(CFG_NAME)/i3c_tb_cfg_pkg.sv
 
 config: config-rtl config-rdl ## Generate RDL and RTL configuration files
 
-config-rtl: config-print ## Generate top I3C definitions .svh file
-	$(PYTHON) $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) svh_file --output-file $(SRC_DIR)/i3c_defines.svh
+config-rtl: config-print ## Generate the testbench package for RTL parameter overrides
+	mkdir -p $(dir $(TB_CFG_PKG))
+	$(PYTHON) $(CFG_GEN) $(CFG_NAME) $(CFG_FILE) tb_pkg --output-file $(TB_CFG_PKG)
 
 RDL_REGS    := $(SRC_DIR)/rdl/registers.rdl
 RDL_GEN_DIR := $(SRC_DIR)/csr/

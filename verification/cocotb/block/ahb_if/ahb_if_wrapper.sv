@@ -9,8 +9,8 @@ module ahb_if_wrapper
 #(
     localparam int unsigned CsrAddrWidth = I3CCSR_MIN_ADDR_WIDTH,
     localparam int unsigned CsrDataWidth = I3CCSR_DATA_WIDTH,
-    parameter  int unsigned AhbDataWidth = 64,
-    parameter  int unsigned AhbAddrWidth = 32
+    parameter  int unsigned AhbDataWidth = i3c_tb_cfg_pkg::AhbDataWidth,
+    parameter  int unsigned AhbAddrWidth = i3c_tb_cfg_pkg::AhbAddrWidth
 ) (
     // AHB-Lite interface
     input  logic                      hclk,
@@ -102,7 +102,7 @@ module ahb_if_wrapper
   );
 
   always_comb begin : connect_csr_hwif
-    hwif_in = '0;
+    hwif_in = '{default: '0};
     hwif_in.rst_ni = hreset_n;
   end
 

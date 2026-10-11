@@ -225,7 +225,6 @@ module axi_csr_tracker (
 
 endmodule : axi_csr_tracker
 
-`ifdef I3C_USE_AXI
 bind axi_adapter axi_csr_tracker u_axi_csr_tracker (
     .clk_i          (clk_i),
     .rst_ni         (rst_ni),
@@ -235,7 +234,5 @@ bind axi_adapter axi_csr_tracker u_axi_csr_tracker (
     .s_cpuif_wr_data(s_cpuif_wr_data),
     .s_cpuif_rd_data(s_cpuif_rd_data)
 );
-`endif // I3C_USE_AXI
-
 `endif // VERILATOR
 `endif // SYNTHESIS

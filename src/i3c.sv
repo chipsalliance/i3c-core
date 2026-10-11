@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
 
-`include "i3c_defines.svh"
-
 /*
     This module is the top level view of the I3C Controller without the I3C bus I/O integration.
 
@@ -22,33 +20,30 @@ module i3c
   import i3c_pkg::*;
   import controller_pkg::*;
 #(
-`ifdef I3C_USE_AHB
-    parameter int unsigned AhbDataWidth = `AHB_DATA_WIDTH,
-    parameter int unsigned AhbAddrWidth = `AHB_ADDR_WIDTH,
-`elsif I3C_USE_AXI
-    parameter int unsigned AxiDataWidth = `AXI_DATA_WIDTH,
-    parameter int unsigned AxiAddrWidth = `AXI_ADDR_WIDTH,
-    parameter int unsigned AxiUserWidth = `AXI_USER_WIDTH,
-    parameter int unsigned AxiIdWidth = `AXI_ID_WIDTH,
-`ifdef AXI_ID_FILTERING
-    parameter int unsigned NumPrivIds = `NUM_PRIV_IDS,
-`endif
-`endif
-    parameter int unsigned DatAw = i3c_pkg::DatAw,
-    parameter int unsigned DctAw = i3c_pkg::DctAw,
+    parameter bit UseAxi = 1'b1,
+    parameter int unsigned AhbDataWidth = 64,
+    parameter int unsigned AhbAddrWidth = 18,
+    parameter int unsigned AxiDataWidth = 32,
+    parameter int unsigned AxiAddrWidth = 12,
+    parameter int unsigned AxiUserWidth = 32,
+    parameter int unsigned AxiIdWidth = 8,
+    parameter bit EnableIdFiltering = 1'b1,
+    parameter int unsigned NumPrivIds = 4,
+    parameter bit IbiFifoExtSize = 1'b0,
+    parameter int unsigned DatDepth = 128,
+    parameter int unsigned DctDepth = 128,
+    parameter bit DisableLoopback = 1'b0,
+    parameter int unsigned DatAw = $clog2(DatDepth),
+    parameter int unsigned DctAw = $clog2(DctDepth),
 
     parameter int unsigned CsrAddrWidth = I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH,
     parameter int unsigned CsrDataWidth = I3CCSR_pkg::I3CCSR_DATA_WIDTH,
 
-    parameter int unsigned HciRespFifoDepth = `RESP_FIFO_DEPTH,
-    parameter int unsigned HciCmdFifoDepth = `CMD_FIFO_DEPTH,
-    parameter int unsigned HciRxFifoDepth = `RX_FIFO_DEPTH,
-    parameter int unsigned HciTxFifoDepth = `TX_FIFO_DEPTH,
-`ifdef IBI_FIFO_EXT_SIZE
-    parameter int unsigned HciIbiFifoDepth = 8 * `IBI_FIFO_DEPTH,
-`else
-    parameter int unsigned HciIbiFifoDepth = `IBI_FIFO_DEPTH,
-`endif
+    parameter int unsigned HciRespFifoDepth = 64,
+    parameter int unsigned HciCmdFifoDepth = 64,
+    parameter int unsigned HciRxFifoDepth = 64,
+    parameter int unsigned HciTxFifoDepth = 64,
+    parameter int unsigned HciIbiFifoDepth = 64 * (IbiFifoExtSize ? 8 : 1),
 
     localparam int unsigned HciRespFifoDepthWidth = $clog2(HciRespFifoDepth + 1),
     localparam int unsigned HciCmdFifoDepthWidth  = $clog2(HciCmdFifoDepth + 1),
@@ -68,15 +63,11 @@ module i3c
     parameter int unsigned HciTxThldWidth   = 3,
     parameter int unsigned HciIbiThldWidth  = 8,
 
-    parameter int unsigned TtiRxDescFifoDepth = `RESP_FIFO_DEPTH,
-    parameter int unsigned TtiTxDescFifoDepth = `CMD_FIFO_DEPTH,
-    parameter int unsigned TtiRxFifoDepth = `RX_FIFO_DEPTH,
-    parameter int unsigned TtiTxFifoDepth = `TX_FIFO_DEPTH,
-`ifdef IBI_FIFO_EXT_SIZE
-    parameter int unsigned TtiIbiFifoDepth = 8 * `IBI_FIFO_DEPTH,
-`else
-    parameter int unsigned TtiIbiFifoDepth = `IBI_FIFO_DEPTH,
-`endif
+    parameter int unsigned TtiRxDescFifoDepth = 64,
+    parameter int unsigned TtiTxDescFifoDepth = 64,
+    parameter int unsigned TtiRxFifoDepth = 64,
+    parameter int unsigned TtiTxFifoDepth = 64,
+    parameter int unsigned TtiIbiFifoDepth = 64 * (IbiFifoExtSize ? 8 : 1),
     localparam int unsigned TtiTxDescFifoDepthWidth = $clog2(TtiTxDescFifoDepth + 1),
     localparam int unsigned TtiRxDescFifoDepthWidth = $clog2(TtiRxDescFifoDepth + 1),
     localparam int unsigned TtiTxFifoDepthWidth = $clog2(TtiTxFifoDepth + 1),
@@ -100,7 +91,6 @@ module i3c
     input clk_i,  // clock
     input rst_ni, // active low reset
 
-`ifdef I3C_USE_AHB
     // AHB-Lite interface
     // Byte address of the transfer
     input  logic [  AhbAddrWidth-1:0] haddr_i,
@@ -129,18 +119,14 @@ module i3c
     // Indicates all subordinates have finished transfers
     input  logic                      hready_i,
 
-`elsif I3C_USE_AXI
     // AXI4 subordinate interface
     // Must be parameterized with AW=AxiAddrWidth, DW=AxiDataWidth,
     // UW=AxiUserWidth and IW=AxiIdWidth
     axi_if.w_sub s_axi_w_if,
     axi_if.r_sub s_axi_r_if,
-`ifdef AXI_ID_FILTERING
     // ID Filtering
     input logic disable_id_filtering_i,
     input logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds],
-`endif
-`endif
 
     // I3C bus IO
 
@@ -245,13 +231,13 @@ module i3c
 
   // DAT <-> Controller interface
   logic                               dat_read_valid_hw;
-  logic [     $clog2(`DAT_DEPTH)-1:0] dat_index_hw;
+  logic [                 DatAw-1:0] dat_index_hw;
   logic [                       63:0] dat_rdata_hw;
 
   // DCT <-> Controller interface
   logic                               dct_write_valid_hw;
   logic                               dct_read_valid_hw;
-  logic [     $clog2(`DCT_DEPTH)-1:0] dct_index_hw;
+  logic [                 DctAw-1:0] dct_index_hw;
   logic [                      127:0] dct_wdata_hw;
   logic [                      127:0] dct_rdata_hw;
 
@@ -326,7 +312,21 @@ module i3c
   assign i3c_fsm_en_i = 1'b0;
   logic i3c_fsm_idle_o;
 
-`ifdef I3C_USE_AHB
+  if (!UseAxi) begin : gen_ahb
+  assign s_axi_w_if.awready = 1'b0;
+  assign s_axi_w_if.wready = 1'b0;
+  assign s_axi_w_if.bvalid = 1'b0;
+  assign s_axi_w_if.bresp = '0;
+  assign s_axi_w_if.bid = '0;
+  assign s_axi_w_if.buser = '0;
+  assign s_axi_r_if.arready = 1'b0;
+  assign s_axi_r_if.rvalid = 1'b0;
+  assign s_axi_r_if.rdata = '0;
+  assign s_axi_r_if.rresp = '0;
+  assign s_axi_r_if.rid = '0;
+  assign s_axi_r_if.ruser = '0;
+  assign s_axi_r_if.rlast = 1'b0;
+
   ahb_if #(
       .AhbDataWidth(AhbDataWidth),
       .AhbAddrWidth(AhbAddrWidth)
@@ -360,16 +360,18 @@ module i3c
       .s_cpuif_wr_err(s_cpuif_wr_err)
   );
 
-`elsif I3C_USE_AXI
+  end else begin : gen_axi
+  assign hrdata_o = '0;
+  assign hreadyout_o = 1'b0;
+  assign hresp_o = 1'b0;
+
   axi_adapter #(
       .AxiDataWidth(AxiDataWidth),
       .AxiAddrWidth(AxiAddrWidth),
       .AxiUserWidth(AxiUserWidth),
-      .AxiIdWidth  (AxiIdWidth)
-`ifdef AXI_ID_FILTERING
-        ,
+      .AxiIdWidth  (AxiIdWidth),
+      .EnableIdFiltering(EnableIdFiltering),
       .NumPrivIds(NumPrivIds)
-`endif
   ) i3c_axi_if (
       .clk_i (clk_i),
       .rst_ni(rst_ni),
@@ -378,10 +380,8 @@ module i3c
       .s_axi_w_if(s_axi_w_if),
       .s_axi_r_if(s_axi_r_if),
 
-`ifdef AXI_ID_FILTERING
       .disable_id_filtering_i(disable_id_filtering_i),
       .priv_ids_i(priv_ids_i),
-`endif
 
       // I3C SW CSR access interface
       .s_cpuif_req(s_cpuif_req),
@@ -397,7 +397,7 @@ module i3c
       .s_cpuif_wr_ack(s_cpuif_wr_ack),
       .s_cpuif_wr_err(s_cpuif_wr_err)
   );
-`endif
+  end
 
   logic phy2ctrl_scl;
   logic phy2ctrl_sda;
@@ -507,15 +507,21 @@ module i3c
   I3CCSR_pkg::I3CCSR__I3C_EC__SecFwRecoveryIf__in_t  hwif_rec_inp;
 
   logic bypass_i3c_core;
-`ifndef DISABLE_LOOPBACK
-  assign bypass_i3c_core = hwif_out.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value;
-`else
-  assign bypass_i3c_core = '0;
-`endif
+  assign bypass_i3c_core = DisableLoopback ? 1'b0 : hwif_out.I3C_EC.SoCMgmtIf.REC_INTF_CFG.REC_INTF_BYPASS.value;
 
   controller #(
       .DatAw(DatAw),
-      .DctAw(DctAw)
+      .DctAw(DctAw),
+      .HciRespFifoDepth(HciRespFifoDepth),
+      .HciCmdFifoDepth(HciCmdFifoDepth),
+      .HciRxFifoDepth(HciRxFifoDepth),
+      .HciTxFifoDepth(HciTxFifoDepth),
+      .HciIbiFifoDepth(HciIbiFifoDepth),
+      .TtiRxDescFifoDepth(TtiRxDescFifoDepth),
+      .TtiTxDescFifoDepth(TtiTxDescFifoDepth),
+      .TtiRxFifoDepth(TtiRxFifoDepth),
+      .TtiTxFifoDepth(TtiTxFifoDepth),
+      .TtiIbiFifoDepth(TtiIbiFifoDepth)
   ) xcontroller (
       .clk_i (clk_i),
       .rst_ni(rst_ni),

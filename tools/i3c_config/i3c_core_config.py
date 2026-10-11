@@ -5,14 +5,14 @@
 import argparse
 import json
 import os
+from pathlib import Path
 
 import yaml
 from common import ConfigException, I3CCoreConfig, I3CGenericConfig, RegGenConfig
 from jsonschema import ValidationError, validate
-from py2svh import cfg2svh
 
 _DEFAULT_CONFIG_FILE = "i3c_core_configs.yaml"
-_DEFAULT_OUT_DEFINES_FILE = "i3c_defines.svh"
+_DEFAULT_OUT_TB_PACKAGE_FILE = "i3c_tb_cfg_pkg.sv"
 _DEFAULT_I3C_CONFIG_NAME = "default"
 
 
@@ -150,26 +150,50 @@ class VerilatorSimOpts(CmdLineOpts):
         return super().output(I3CCoreConfig(config), args)
 
 
-class SVHFile(BaseOpts):
+class TBPackageFile(BaseOpts):
     def __init__(self) -> None:
-        super().__init__("svh_file", "I3C Core parameter definitions in a System Verilog file")
+        super().__init__("tb_pkg", "testbench configuration package for RTL parameter overrides")
 
     def setup_args(self, subparser: argparse._SubParsersAction):
         super().setup_args(subparser)
-        self.argparser.add_argument(
-            "--output-file",
-            help=("Path to the output System Verilog file"),
-            default=_DEFAULT_OUT_DEFINES_FILE,
-        )
+        self.argparser.add_argument("--output-file", default=_DEFAULT_OUT_TB_PACKAGE_FILE)
 
-    def output(self, config: I3CGenericConfig, args) -> None:
-        cfg2svh(config, args.output_file)
+    def output(self, config: I3CGenericConfig, args) -> str:
+        values = {
+            "UseAxi": config.FrontendBusInterface == "AXI",
+            "AhbAddrWidth": 18,
+            "AhbDataWidth": 64,
+            "AxiAddrWidth": 12,
+            "AxiDataWidth": 32,
+            "AxiUserWidth": 32,
+            "AxiIdWidth": 8,
+            "EnableIdFiltering": getattr(config, "FrontendBusIdFiltering", False),
+            "NumPrivIds": getattr(config, "NumPrivIds", 4),
+            "DisableLoopback": getattr(config, "DisableLoopback", False),
+        }
+        bus = "Axi" if values["UseAxi"] else "Ahb"
+        values[bus + "AddrWidth"] = config.FrontendBusAddrWidth
+        values[bus + "DataWidth"] = config.FrontendBusDataWidth
+        if values["UseAxi"]:
+            values["AxiUserWidth"] = config.FrontendBusUserWidth
+            values["AxiIdWidth"] = config.FrontendBusIdWidth
+        for field in ("CmdFifoDepth", "RespFifoDepth", "RxFifoDepth", "TxFifoDepth", "IbiFifoDepth", "IbiFifoExtSize", "DatDepth", "DctDepth"):
+            values[field] = getattr(config, field)
+
+        lines = ["// SPDX-License-Identifier: Apache-2.0", "// Generated from the selected YAML profile; do not edit.", "package i3c_tb_cfg_pkg;"]
+        for name, value in values.items():
+            if isinstance(value, bool):
+                lines.append(f"  localparam bit {name} = 1'b{int(value)};")
+            else:
+                lines.append(f"  localparam int unsigned {name} = {value};")
+        lines.append("endpackage")
+        Path(args.output_file).write_text("\n".join(lines) + "\n", encoding="ascii")
         return f"Successfully saved configuration to {args.output_file}."
 
 
 def main():
     supported_targets = [
-        SVHFile(),
+        TBPackageFile(),
         RegGenOpts(),
         QuestaSimOpts(),
         QuestaCompileOpts(),

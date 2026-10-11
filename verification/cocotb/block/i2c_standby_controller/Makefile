@@ -11,6 +11,7 @@ TEST_FILES   = $(sort $(wildcard test_*.py))
 
 MODULE      ?= $(subst $(space),$(comma),$(subst .py,,$(TEST_FILES)))
 TOPLEVEL     = controller_standby_i2c_harness
+CFG_NAME     = ahb
 
 EXTRA_ARGS += -Wno-WIDTHTRUNC -Wno-WIDTHEXPAND -Wno-PINCONNECTEMPTY -Wno-UNUSEDPARAM
 
@@ -18,7 +19,6 @@ include $(TEST_DIR)/../../caliptra_common.mk
 
 VERILOG_SOURCES  += \
     $(CALIPTRA_ROOT)/src/caliptra_prim/rtl/caliptra_prim_assert_dummy_macros.svh \
-    ${CALIPTRA_ROOT}/src/caliptra_prim/rtl/caliptra_prim_count_pkg.sv \
     $(CALIPTRA_ROOT)/src/libs/rtl/ahb_defines_pkg.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_pkg.sv \
     $(CALIPTRA_ROOT)/src/axi/rtl/axi_if.sv \
@@ -71,7 +71,5 @@ VERILOG_SOURCES  += \
     ${SRC_DIR}/ctrl/controller.sv \
     ${SRC_DIR}/ctrl/stable_high_detector.sv \
     $(TEST_DIR)/controller_standby_i2c_harness.sv
-
-EXTRA_ARGS += +define+I3C_USE_AHB
 
 include $(TEST_DIR)/../block_common.mk

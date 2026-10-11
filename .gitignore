@@ -55,6 +55,5 @@ vcs_work/
 verdiLog/
 venv/
 .venv
-verification/tools/i3c_defines.svh
 work/
 ucli.key

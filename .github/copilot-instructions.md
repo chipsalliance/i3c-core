@@ -21,14 +21,14 @@ without building the venv.
 
 ## Configuration (run before anything else)
 
-The RTL is parameterized by a named configuration. `make config CFG_NAME=<name>`
-generates two **in-tree, untracked, and required** artifacts before RTL builds/tests:
-- `src/i3c_defines.svh` (defines/parameters)
+The RTL uses ordinary module parameters. `make config CFG_NAME=<name>` generates:
+- `build/<name>/i3c_tb_cfg_pkg.sv` (testbench parameter values)
 - `src/csr/` register block (from `src/rdl/registers.rdl` via PeakRDL)
 
-Configs are defined in `i3c_core_configs.yaml`: `ahb` (default), `axi`, `axi_hc`,
-`axi-controller`, `axi_bypass`. They select the frontend bus (AHB/AXI), FIFO depths,
-and controller/target support. The test targets run `make config` themselves.
+Configs are defined in `i3c_core_configs.yaml`: `ahb`, `axi`, and `axi_bypass`
+(default). Cocotb builds generate a selected package in their build directory.
+The checked-in default AXI package is `verification/cocotb/common/i3c_tb_cfg_pkg.sv`.
+Both bus port sets are always present; `UseAxi` selects the frontend.
 
 ## Build, test, lint
 
@@ -68,8 +68,8 @@ AXI or AHB, selected at elaboration by generated `I3C_USE_AHB`/`I3C_USE_AXI` def
 - Every hand-written source file starts with `// SPDX-License-Identifier: Apache-2.0`.
 - Filelists are `.f` files (e.g. `src/i3c.f`) using `+incdir+` and `${I3C_ROOT_DIR}`/
   `${CALIPTRA_ROOT}` variables — add new RTL files here, not to a build script.
-- Never edit generated files (`src/csr/*`, `src/i3c_defines.svh`); change `registers.rdl`
-  or `i3c_core_configs.yaml` and rerun `make config`.
+- Never hand-edit generated files (`src/csr/*`, `i3c_tb_cfg_pkg.sv`); change
+  `registers.rdl` or `i3c_core_configs.yaml` and regenerate the corresponding artifact.
 - Cocotb tests live in `verification/cocotb/{block,top}/<name>/` with a `Makefile`
   including `../{block,top}_common.mk`; test files are named `test_*.py`. Test names map
   to testplan `.hjson` files under `verification/testplan/`; keep them in sync.

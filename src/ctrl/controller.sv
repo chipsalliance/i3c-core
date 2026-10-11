@@ -408,7 +408,10 @@ module controller
     ctrl_bus_i[3] = bus;
   end
 
-  configuration xconfiguration (
+  configuration #(
+    .RxFifoDepth(TtiRxFifoDepth),
+    .TxFifoDepth(TtiTxFifoDepth)
+  ) xconfiguration (
     .clk_i                           (clk_i),
     .rst_ni                          (rst_ni),
     .hwif_out_i                      (hwif_out_i),
@@ -461,7 +464,15 @@ module controller
   assign recovery_mode = (hwif_rec_i.DEVICE_STATUS_0.DEV_STATUS.value == RecoveryMode);
 
   // Active controller
-  controller_active xcontroller_active (
+  controller_active #(
+    .DatAw(DatAw),
+    .DctAw(DctAw),
+    .HciRespFifoDepth(HciRespFifoDepth),
+    .HciCmdFifoDepth(HciCmdFifoDepth),
+    .HciRxFifoDepth(HciRxFifoDepth),
+    .HciTxFifoDepth(HciTxFifoDepth),
+    .HciIbiFifoDepth(HciIbiFifoDepth)
+  ) xcontroller_active (
     .clk_i(clk_i),
     .rst_ni(rst_ni),
     .ctrl_bus_i(ctrl_bus_i[0:1]),
@@ -539,7 +550,13 @@ module controller
   );
 
   // Standby (Secondary) Controller
-  controller_standby xcontroller_standby (
+  controller_standby #(
+    .TtiRxDescFifoDepth(TtiRxDescFifoDepth),
+    .TtiTxDescFifoDepth(TtiTxDescFifoDepth),
+    .TtiRxFifoDepth(TtiRxFifoDepth),
+    .TtiTxFifoDepth(TtiTxFifoDepth),
+    .TtiIbiFifoDepth(TtiIbiFifoDepth)
+  ) xcontroller_standby (
     .clk_i,
     .rst_ni,
     .ctrl_bus_i                     (ctrl_bus_i[2:3]),

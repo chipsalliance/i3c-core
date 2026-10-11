@@ -6,7 +6,12 @@ from io import StringIO
 
 import pytest
 from defs import _TEST_CONFIG_FILE_PATH, Configs, Opts
-from i3c_core_config import _DEFAULT_OUT_DEFINES_FILE, ConfigException, main
+from i3c_core_config import _DEFAULT_OUT_TB_PACKAGE_FILE, ConfigException, main
+
+
+@pytest.fixture(autouse=True)
+def isolated_output_directory(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
 
 
 def run_and_capture_output(config_name, config_filename, tool_type):
@@ -47,9 +52,9 @@ def run_and_capture_output(config_name, config_filename, tool_type):
         Opts.QuestaCompile,
         Opts.RegGen,
         Opts.VerilatorSim,
-        Opts.SVHFile,
+        Opts.TBPackage,
     ],
-    ids=["VCS", "QuestaSim", "QuestaCompile", "RegGen", "VerilatorSim", "SVHFile"],
+    ids=["VCS", "QuestaSim", "QuestaCompile", "RegGen", "VerilatorSim", "TBPackage"],
 )
 def tool(request):
     return request.param
@@ -131,16 +136,19 @@ def test_invalid_config(invalid_config, tool):
     params=Configs.edge_configs + Configs.valid_configs,
     ids=Configs.edge_configs + Configs.valid_configs,
 )
-def config_svh(request):
+def config_package(request):
     return request.param
 
 
-def test_gen_shv_file(config_svh):
+def test_gen_package_file(config_package, tmp_path, monkeypatch):
     """
     Invokes all valid configurations and expects `i3c_core_config` generator to
-    produce the default defines file.
+    produce the testbench parameter package.
     """
-    _ = run_and_capture_output(config_svh, _TEST_CONFIG_FILE_PATH, Opts.SVHFile.opts_arg)
-    with open(_DEFAULT_OUT_DEFINES_FILE, "r") as svh:
-        content = svh.read()
-        assert content
+    monkeypatch.chdir(tmp_path)
+    _ = run_and_capture_output(config_package, _TEST_CONFIG_FILE_PATH, Opts.TBPackage.opts_arg)
+    with open(_DEFAULT_OUT_TB_PACKAGE_FILE, "r") as package:
+        content = package.read()
+        assert "package i3c_tb_cfg_pkg;" in content
+        assert "localparam" in content
+        assert "`define" not in content

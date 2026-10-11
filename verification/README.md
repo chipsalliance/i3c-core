@@ -55,19 +55,32 @@ unknown data on a real read remains visible. Adapter-only benches tie unused
 hardware inputs to zero and preserve their reset and active FIFO connections.
 The AXI adapter's indirect FIFO read data is zero outside an acknowledged read;
 unknown data on an acknowledged read still reaches the assertion when enabled.
-AXI queue widths/depths and the descriptor-TX depth-port width derive from that
+AXI/AHB queue widths/depths and the descriptor-TX depth-port width derive from that
 generated configuration rather than separate testbench constants. The standalone
 edge-detector test retains `DETECT_NEGEDGE=0`; explicit AHB benches still use `ahb`.
 
-Before each build, the Makefiles compare the selected profile with the shared
-generated header and regenerate configuration/CSRs if needed. An unchanged
-configuration does not force a rebuild for Python-only test changes. Each
-`SIM_BUILD` retains `i3c_defines.svh` and `i3c_build_config.txt` identifying the
+Before each build, the Makefiles generate `i3c_tb_cfg_pkg.sv` from the selected
+YAML profile. Wrappers pass its constants to the RTL using explicit parameter
+overrides. Both AXI and AHB top-level ports are always present; `UseAxi` selects
+the active frontend. The test wrapper ties the unused bus inputs inactive.
+An unchanged configuration does not force a rebuild for Python-only test changes.
+Each `SIM_BUILD` retains `i3c_tb_cfg_pkg.sv` and `i3c_build_config.txt` identifying the
 selected profile, configuration file, and compile flags; both are also printed
 in the captured run log. Preserve these with
-coverage artifacts; do not infer a database's configuration from the final header
-left in `src/` after a regression. Run different configurations serially because
-the generated CSR sources are shared in-tree.
+coverage artifacts. Production RTL uses ordinary parameters, not a configuration header.
+The default AXI package is checked in at `cocotb/common/i3c_tb_cfg_pkg.sv`;
+profile-specific packages are generated in build directories without modifying it.
+The CSR files and DAT/DCT port types are unchanged: their current capacities
+remain 64 and 128 respectively, with extended IBI sizing disabled.
+No new parameter checks enforce consistency; changing capacities requires
+separately updating those CSR values and types. Missing CSR files require
+`make config`; ordinary testbench builds do not regenerate them.
+
+Bus selection introduces `gen_axi`/`gen_ahb` scopes inside `i3c`. The selected
+adapter is now `i3c.gen_axi.i3c_axi_if` or `i3c.gen_ahb.i3c_ahb_if`.
+The default RTL parameter values match the `axi_bypass` profile. Integrations
+can override the parameters directly without the generated testbench package.
+The PHY always synchronizes SDA/SCL inputs; there is no input-synchronizer bypass.
 
 Running `./install.sh` will install `pyenv` and use it to build a virtual environment, which can be activated with `. activate.sh`.
 Alternatively, `uv` can be used with `uv venv && uv sync` building a virtual environment and then activating it with `. .venv/bin/activate`.

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // This wrapper module provides compliance to cocotbext-AXI
 // with AXI standard signal naming convention
-`include "i3c_defines.svh"
 
 module axi_adapter_wrapper
   import I3CCSR_pkg::I3CCSR_DATA_WIDTH;
@@ -13,13 +12,12 @@ module axi_adapter_wrapper
     localparam int unsigned CsrAddrWidth = I3CCSR_MIN_ADDR_WIDTH,
     localparam int unsigned CsrDataWidth = I3CCSR_DATA_WIDTH,
 
-    parameter int unsigned AxiAddrWidth = 12,
-    parameter int unsigned AxiDataWidth = 32,
-    parameter int unsigned AxiUserWidth = 32,
-    parameter int unsigned AxiIdWidth   = 8
-`ifdef AXI_ID_FILTERING,
-    parameter int unsigned NumPrivIds = 4
-`endif
+    parameter int unsigned AxiAddrWidth = i3c_tb_cfg_pkg::AxiAddrWidth,
+    parameter int unsigned AxiDataWidth = i3c_tb_cfg_pkg::AxiDataWidth,
+    parameter int unsigned AxiUserWidth = i3c_tb_cfg_pkg::AxiUserWidth,
+    parameter int unsigned AxiIdWidth   = i3c_tb_cfg_pkg::AxiIdWidth,
+    parameter bit EnableIdFiltering = i3c_tb_cfg_pkg::EnableIdFiltering,
+    parameter int unsigned NumPrivIds = i3c_tb_cfg_pkg::NumPrivIds
 ) (
     input aclk,  // clock
     input areset_n,  // active low reset
@@ -63,7 +61,7 @@ module axi_adapter_wrapper
     output logic                    awready,
 
     input  logic [AxiDataWidth-1:0] wdata,
-    input  logic [             3:0] wstrb,
+    input  logic [AxiDataWidth/8-1:0] wstrb,
     input  logic [AxiUserWidth-1:0] wuser,
     input  logic                    wlast,
     input  logic                    wvalid,
@@ -76,11 +74,9 @@ module axi_adapter_wrapper
     input  logic                    bready,
 
     output logic [           7:0] fifo_depth_o,
-    output logic                  fifo_full_o
-`ifdef AXI_ID_FILTERING,
+    output logic                  fifo_full_o,
     input logic disable_id_filtering_i,
     input logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds]
-`endif
 );
   // I3C SW CSR access interface
   logic                    s_cpuif_req;
@@ -164,10 +160,9 @@ module axi_adapter_wrapper
       .AxiDataWidth(AxiDataWidth),
       .AxiAddrWidth(AxiAddrWidth),
       .AxiUserWidth(AxiUserWidth),
-      .AxiIdWidth(AxiIdWidth)
-`ifdef AXI_ID_FILTERING,
+      .AxiIdWidth(AxiIdWidth),
+      .EnableIdFiltering(EnableIdFiltering),
       .NumPrivIds(NumPrivIds)
-`endif
   ) i3c_axi_if (
       .clk_i (aclk),
       .rst_ni(areset_n),
@@ -176,10 +171,8 @@ module axi_adapter_wrapper
       .s_axi_w_if(s_axi_if.w_sub),
       .s_axi_r_if(s_axi_if.r_sub),
 
-`ifdef AXI_ID_FILTERING
       .disable_id_filtering_i(disable_id_filtering_i),
       .priv_ids_i(priv_ids_i),
-`endif
 
       .s_cpuif_req(s_cpuif_req),
       .s_cpuif_req_is_wr(s_cpuif_req_is_wr),
@@ -254,7 +247,7 @@ module axi_adapter_wrapper
   logic [31:0] fifo_rdata_q, fifo_wdata_q;
 
   always_comb begin : connect_csr_hwif
-    hwif_in = '0;
+    hwif_in = '{default: '0};
     hwif_in.rst_ni = areset_n;
     hwif_in.I3C_EC.TTI.TX_DATA_PORT.wr_ack = wr_ack_q;
     hwif_in.I3C_EC.SecFwRecoveryIf.INDIRECT_FIFO_DATA.rd_ack = rd_ack_q;

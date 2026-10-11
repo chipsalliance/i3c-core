@@ -20,7 +20,7 @@ pip_requirements_path = "../../requirements.txt"
         "test_valid_test_config",
         "test_edge_case_config",
         "test_invalid_config",
-        "test_gen_shv_file",
+        "test_gen_package_file",
     ],
 )
 def i3c_config_verify(session, test_name):
