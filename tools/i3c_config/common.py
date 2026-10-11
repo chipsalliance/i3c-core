@@ -72,12 +72,6 @@ class I3CCoreConfig:
                 self._defines[f"I3C_USE_{bus}"] = 1
                 continue
 
-            # Map "DisableInputFF"
-            if name == "DisableInputFF":
-                if bool(value):
-                    self._defines["DISABLE_INPUT_FF"] = 1
-                continue
-
             # Map "DisableLoopback"
             if name == "DisableLoopback":
                 if bool(value):

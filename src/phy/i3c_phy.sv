@@ -29,8 +29,6 @@ module i3c_phy (
     output logic sel_od_pp_o
 );
 
-`ifndef DISABLE_INPUT_FF
-
   // Synchronize SCL to system clock
   caliptra_prim_flop_2sync #(
       .Width(1),
@@ -52,13 +50,6 @@ module i3c_phy (
       .d_i(sda_i),
       .q_o(ctrl_sda_o)
   );
-
-`else
-
-  assign ctrl_sda_o = sda_i;
-  assign ctrl_scl_o = scl_i;
-
-`endif
 
   assign sda_o = ctrl_sda_i;
   assign scl_o = ctrl_scl_i;

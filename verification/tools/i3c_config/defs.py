@@ -5,7 +5,7 @@ import re
 from dataclasses import dataclass
 
 import yaml
-from i3c_core_config import _DEFAULT_OUT_DEFINES_FILE
+from i3c_core_config import _DEFAULT_OUT_TB_PACKAGE_FILE
 
 _TEST_CONFIG_FILE_PATH = os.path.join(os.path.dirname(__file__), "test_configs.yaml")
 
@@ -29,7 +29,7 @@ class Opts:
     # Shared patterns
     snake_case = r"[a-z]+[a-z0-9]*(_[a-z0-9]+)*"
     UPPER_SNAKE_CASE = r"[A-Z]+[A-Z0-9]*(_[A-Z0-9]+)*"
-    PascalCase = r"(DisableInputFF|[A-Z][a-z]+(?:[A-Z][a-z]+)*)"
+    PascalCase = r"[A-Z][a-z]+(?:[A-Z][a-z]+)*"
 
     def __pvalue(name):
         return "".join([re.escape("-pvalue+"), name, r"=[0-9]+"])
@@ -48,8 +48,8 @@ class Opts:
     )
 
     # Check if the success message is displayed
-    svh_msg = "".join([r"(S|s)ucc.*", _DEFAULT_OUT_DEFINES_FILE, r".*"])
-    SVHFile = Tool("svh_file", r"", svh_msg)
+    package_msg = "".join([r"(S|s)ucc.*", _DEFAULT_OUT_TB_PACKAGE_FILE, r".*"])
+    TBPackage = Tool("tb_pkg", r"", package_msg)
 
 
 class Configs:

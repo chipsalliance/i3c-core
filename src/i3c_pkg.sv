@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 package i3c_pkg;
-  `include "i3c_defines.svh"
   `include "ccc.svh"
   `define I3C_RSVD_ADDR 7'h7E
   `define I3C_RSVD_BYTE 8'hFC
@@ -64,8 +63,9 @@ package i3c_pkg;
   endfunction : is_i3c_rsvd_addr
 
   localparam int unsigned RespErrIdWidth = 4;
-  localparam int unsigned DatAw = $clog2(`DAT_DEPTH);
-  localparam int unsigned DctAw = $clog2(`DCT_DEPTH);
+  // The unchanged CSR map supports 128 entries in each table.
+  localparam int unsigned DatAw = $clog2(128);
+  localparam int unsigned DctAw = $clog2(128);
 
   localparam int unsigned I3cDataWidth = 8;
   localparam int unsigned I3cAddrWidth = 7;

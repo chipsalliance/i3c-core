@@ -16,7 +16,6 @@ ahb:
   FrontendBusInterface: "AHB"
   FrontendBusAddrWidth: 18
   FrontendBusDataWidth: 64
-  DisableInputFF: False
 
 axi:
   CmdFifoDepth: 64
@@ -34,7 +33,6 @@ axi:
   FrontendBusIdWidth: 8
   FrontendBusIdFiltering: True
   NumPrivIds: 4
-  DisableInputFF: False
   DisableLoopback: True
 
 axi_bypass:
@@ -53,5 +51,3 @@ axi_bypass:
   FrontendBusIdWidth: 8
   FrontendBusIdFiltering: True
   NumPrivIds: 4
-  DisableInputFF: False
-

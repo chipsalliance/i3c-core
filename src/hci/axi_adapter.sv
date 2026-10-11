@@ -1,17 +1,15 @@
 // SPDX-License-Identifier: Apache-2.0
-`include "i3c_defines.svh"
 
 module axi_adapter #(
     localparam int unsigned CsrAddrWidth = 12,
     localparam int unsigned CsrDataWidth = 32,
 
-    parameter int unsigned AxiDataWidth = 64,
-    parameter int unsigned AxiAddrWidth = 32,
+    parameter int unsigned AxiDataWidth = 32,
+    parameter int unsigned AxiAddrWidth = 12,
     parameter int unsigned AxiUserWidth = 32,
-    parameter int unsigned AxiIdWidth   = 8
-`ifdef AXI_ID_FILTERING,
+    parameter int unsigned AxiIdWidth   = 8,
+    parameter bit EnableIdFiltering = 1'b1,
     parameter int unsigned NumPrivIds   = 4
-`endif
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -22,10 +20,8 @@ module axi_adapter #(
     axi_if.w_sub s_axi_w_if,
     axi_if.r_sub s_axi_r_if,
 
-`ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
     input logic [AxiUserWidth-1:0] priv_ids_i[NumPrivIds],
-`endif
 
     // I3C SW CSR access interface
     output logic                    s_cpuif_req,
@@ -50,7 +46,7 @@ module axi_adapter #(
   logic rlegal;
   logic wlegal;
 
-`ifdef AXI_ID_FILTERING
+  if (EnableIdFiltering) begin : gen_id_filter
   logic [NumPrivIds-1:0] rsel;
   logic [NumPrivIds-1:0] wsel;
 
@@ -77,12 +73,12 @@ module axi_adapter #(
     end
   end
 
-`else
+  end else begin : gen_no_id_filter
   always_comb begin
     rlegal = 1'b1;
     wlegal = 1'b1;
   end
-`endif
+  end
 
   logic i3c_req_dv, i3c_req_hld, i3c_req_hld_ext;
   logic cpuif_req_stall;

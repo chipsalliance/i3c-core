@@ -6,6 +6,8 @@ module flow_active
   import controller_pkg::*;
   import i3c_pkg::*;
 #(
+    parameter int unsigned DatAw = i3c_pkg::DatAw,
+    parameter int unsigned DctAw = i3c_pkg::DctAw,
     parameter int unsigned HciRespDataWidth = 32,
     parameter int unsigned HciCmdDataWidth  = 64,
     parameter int unsigned HciRxDataWidth   = 32,
@@ -70,13 +72,13 @@ module flow_active
 
     // DAT <-> Controller interface
     output logic                          dat_read_valid_hw_o,
-    output logic [$clog2(`DAT_DEPTH)-1:0] dat_index_hw_o,
+    output logic [DatAw-1:0] dat_index_hw_o,
     input  logic [                  63:0] dat_rdata_hw_i,
 
     // DCT <-> Controller interface
     output logic                          dct_write_valid_hw_o,
     output logic                          dct_read_valid_hw_o,
-    output logic [$clog2(`DCT_DEPTH)-1:0] dct_index_hw_o,
+    output logic [DctAw-1:0] dct_index_hw_o,
     output logic [                 127:0] dct_wdata_hw_o,
     input  logic [                 127:0] dct_rdata_hw_i,
 
@@ -401,7 +403,7 @@ module flow_active
       FetchDAT: begin
         // FUTUREFIX: Optimize DAT read so it takes just 1 cycle
         dat_read_valid_hw_o = 1'b1;
-        dat_index_hw_o = $clog2(`DAT_DEPTH)'(dev_index);
+        dat_index_hw_o = DatAw'(dev_index);
       end
       // I2CWriteImmediate: Execute Immediate Transfer to Legacy I2C Device via I2C Controller
       I2CWriteImmediate: begin

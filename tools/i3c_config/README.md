@@ -20,7 +20,8 @@ axi:
   FrontendBusDataWidth: 32
   FrontendBusUserWidth: 32
   FrontendBusIdWidth: 8
-  DisableInputFF: True
+  FrontendBusIdFiltering: True
+  NumPrivIds: 4
 ```
 
 ## Usage
@@ -28,12 +29,32 @@ axi:
 To generate the I3C configuration, run:
 
 ```bash
-make generate CFG_NAME=<name> CFG_FILE=<path/to/.yaml>
+make config-rtl CFG_NAME=<name> CFG_FILE=<path/to/.yaml>
 ```
 
 Where the
-* `CFG_NAME` is a name of the target yaml configuration (`axi` in an example above) - if not specified it's set to `default`.
+* `CFG_NAME` is a name of the target YAML configuration (`axi` in the example above); the Makefile defaults to `axi_bypass`.
 * `CFG_FILE` contains a collection of supported configurations - by default it's `i3c_core_configs.yaml`
+
+This generates `build/<name>/i3c_tb_cfg_pkg.sv`. The `tb_pkg`
+generator command also accepts `--output-file` for a per-build package.
+Cocotb Makefiles generate their own package before compiling the testbench
+wrappers, which explicitly pass its values into ordinary RTL parameters.
+Production RTL does not import the testbench package.
+`verification/cocotb/common/i3c_tb_cfg_pkg.sv` is the checked-in default AXI
+package. Profile-specific builds do not overwrite it. To refresh this default:
+
+```bash
+make config-rtl CFG_NAME=axi_bypass TB_CFG_PKG=verification/cocotb/common/i3c_tb_cfg_pkg.sv
+```
+
+`i3c_wrapper` defaults to AXI with 12-bit addresses, 32-bit data/user fields,
+8-bit IDs, ID filtering enabled, and four privileged IDs. Both bus port sets
+and the filtering inputs are always present. Set `UseAxi=0` for AHB; its default
+address/data widths are 18/64. Even an AHB integration must connect an `axi_if`
+instance for the unused AXI ports. Tie unused bus inputs to known inactive
+values; the core drives unused bus outputs to zero. SDA/SCL input synchronization
+is always enabled. `DisableLoopback` defaults to false.
 
 ## Extending the configuration
 
@@ -61,9 +82,13 @@ If a parameter is of a basic type such as *integer, string, boolean, number* it 
 The `I3CCoreConfig` class is based on the I3C Schema and specified configuration.
 The parameter validation is performed using the [jsonschema](https://pypi.org/project/jsonschema/) tool.
 
-In order to handle more complex parameter types (*object, array*) or to perform a parameter transformation the `output` function of `CmdLineOpts` needs to be modified to produce the command line options properly and the `I3CCoreConfig` for the proper `defines.svh` generation.
+For the current parameter flow, update `TBPackageFile` when adding a YAML field
+and wire its generated constant through the affected testbench and RTL modules.
+Keep `RegGenConfig`, the CSR definitions, and the RTL parameter values consistent
+when adding configurations with different capacities.
 
-See [I3CCoreConfig class](common.py) for parameter transformation (e.g. `FrontendBusInterface` -> `I3C_USE_AHB` / `I3C_USE_AXI`) and the parameter case change (`PascalCase` -> `UPPER_SNAKE_CASE`) reference.
+`I3CCoreConfig` in `common.py` implements the legacy macro-output formats;
+`TBPackageFile` emits CamelCase package constants matching the RTL parameters.
 
 ### Tests
 

@@ -2,13 +2,41 @@
 
 This chapter provides a high level overview of the I3C target functionalities implemented in the core.
 
-## Configuration script
+## Configuration
 
-The I3C Core is configured with the [i3c_core_config](https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/i3c_core_config.py) Python script, which reads configurations from the `i3c_core_configs.yaml` YAML file.
+Production RTL is configured through ordinary SystemVerilog parameters on `i3c_wrapper`, which passes them to the core and its submodules. These are elaboration-time settings, not runtime controls. Production RTL neither includes `i3c_defines.svh` nor imports a generated testbench configuration package.
 
-The supported configurations can be found in the [i3c_core_configs.yaml](https://github.com/chipsalliance/i3c-core/blob/main/i3c_core_configs.yaml) file.
+The integrating system owns the interface configuration and supplies parameter overrides as needed. I3C's configuration must not be used as a global source of interface widths for unrelated IPs.
 
-More details on the usage of the tool can be found in the [relevant README](https://github.com/chipsalliance/i3c-core/blob/main/tools/i3c_config/README.md).
+### RTL parameters
+
+The public `i3c_wrapper` configuration defaults are:
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `UseAxi` | `bit` | `1` | Select AXI when set, or AHB when clear. Both bus port sets remain present. |
+| `AxiAddrWidth` | `int unsigned` | `12` | AXI address width in bits. |
+| `AxiDataWidth` | `int unsigned` | `32` | AXI data width in bits. |
+| `AxiUserWidth` | `int unsigned` | `32` | AXI USER width in bits, including privileged-ID entries. |
+| `AxiIdWidth` | `int unsigned` | `8` | AXI transaction ID width in bits. |
+| `AhbAddrWidth` | `int unsigned` | `18` | AHB address width in bits. |
+| `AhbDataWidth` | `int unsigned` | `64` | AHB data width in bits. |
+| `EnableIdFiltering` | `bit` | `1` | Include the AXI USER filtering logic; see {doc}`axi_id_filtering`. |
+| `NumPrivIds` | `int unsigned` | `4` | Number of privileged-ID entries. Must be positive when filtering is enabled. |
+| `CmdFifoDepth` | `int unsigned` | `64` | HCI command and TTI TX descriptor queue depth in entries. |
+| `RespFifoDepth` | `int unsigned` | `64` | HCI response and TTI RX descriptor queue depth in entries. |
+| `RxFifoDepth` | `int unsigned` | `64` | HCI and TTI RX data queue depth in entries. |
+| `TxFifoDepth` | `int unsigned` | `64` | HCI and TTI TX data queue depth in entries. |
+| `IbiFifoDepth` | `int unsigned` | `64` | Base HCI and TTI IBI queue depth in entries. |
+| `IbiFifoExtSize` | `bit` | `0` | Multiply the base IBI queue depth by eight when set. |
+| `DatDepth` | `int unsigned` | `128` | Device Address Table depth in entries. |
+| `DctDepth` | `int unsigned` | `128` | Device Characteristic Table depth in entries. |
+| `DisableLoopback` | `bit` | `0` | When set, prevent `REC_INTF_CFG.REC_INTF_BYPASS` from enabling the AXI recovery bypass path. |
+
+The defaults match the `axi_bypass` YAML profile. The `axi` profile additionally sets `DisableLoopback` to true. Selecting a YAML profile does not change production RTL defaults; its values take effect only when passed as parameter overrides.
+
+The AXI interface instances must have address, data, USER, and ID widths matching `AxiAddrWidth`, `AxiDataWidth`, `AxiUserWidth`, and `AxiIdWidth`. The CSR address/data widths default to the constants in `I3CCSR_pkg`; parameter overrides must remain consistent with the generated register block.
+
 
 ## System Bus
 
@@ -16,6 +44,10 @@ The I3C core can connect to system buses via dedicated adapters:
 
 * AXI4
 * AHB - The AHB-Lite implementation is based on the AMBA 3 AHB-Lite Protocol Specification (IHI0033A)
+
+`UseAxi=1` selects the AXI adapter and `UseAxi=0` selects the AHB adapter. Both the AXI modports (`s_axi_w_if`, `s_axi_r_if`) and the discrete AHB ports are always present on `i3c_wrapper`, as are the ID-filtering inputs.
+
+For AXI integration, tie the unused AHB inputs to known inactive values. For AHB integration, connect an `axi_if` instance to the unused AXI ports and tie its request inputs inactive, with the remaining inputs at known values. The core drives the unused bus outputs to zero. Tie unused filtering inputs to known values as well.
 
 ## Virtual target
 

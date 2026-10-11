@@ -1,26 +1,19 @@
 // SPDX-License-Identifier: Apache-2.0
-`include "i3c_defines.svh"
-
 module i3c_test_wrapper #(
-`ifdef I3C_USE_AHB
-    parameter int unsigned AhbDataWidth = `AHB_DATA_WIDTH,
-    parameter int unsigned AhbAddrWidth = `AHB_ADDR_WIDTH,
-`elsif I3C_USE_AXI
-    parameter int unsigned AxiDataWidth = `AXI_DATA_WIDTH,
-    parameter int unsigned AxiAddrWidth = `AXI_ADDR_WIDTH,
-    parameter int unsigned AxiUserWidth = `AXI_USER_WIDTH,
-    parameter int unsigned AxiIdWidth = `AXI_ID_WIDTH,
-`ifdef AXI_ID_FILTERING
-    parameter int unsigned NumPrivIds = `NUM_PRIV_IDS,
-`endif
-`endif
+    parameter bit UseAxi = i3c_tb_cfg_pkg::UseAxi,
+    parameter int unsigned AhbDataWidth = i3c_tb_cfg_pkg::AhbDataWidth,
+    parameter int unsigned AhbAddrWidth = i3c_tb_cfg_pkg::AhbAddrWidth,
+    parameter int unsigned AxiDataWidth = i3c_tb_cfg_pkg::AxiDataWidth,
+    parameter int unsigned AxiAddrWidth = i3c_tb_cfg_pkg::AxiAddrWidth,
+    parameter int unsigned AxiUserWidth = i3c_tb_cfg_pkg::AxiUserWidth,
+    parameter int unsigned AxiIdWidth = i3c_tb_cfg_pkg::AxiIdWidth,
+    parameter int unsigned NumPrivIds = i3c_tb_cfg_pkg::NumPrivIds,
     parameter int unsigned DatAw = i3c_pkg::DatAw,
     parameter int unsigned DctAw = i3c_pkg::DctAw,
 
     parameter int unsigned CsrAddrWidth = I3CCSR_pkg::I3CCSR_MIN_ADDR_WIDTH,
     parameter int unsigned CsrDataWidth = I3CCSR_pkg::I3CCSR_DATA_WIDTH
 )(
-`ifdef I3C_USE_AHB
     input logic hclk,
     input logic hreset_n,
     // AHB-Lite interface
@@ -37,7 +30,6 @@ module i3c_test_wrapper #(
     output logic                      hresp,
     input  logic                      hsel,
     input  logic                      hready,
-`elsif I3C_USE_AXI
     input logic aclk,
     input logic areset_n,
     // AXI4 Interface
@@ -89,11 +81,8 @@ module i3c_test_wrapper #(
     output logic                  bvalid,
     input  logic                  bready,
 
-`ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
     input logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds],
-`endif
-`endif
     // I3C Target Simulation model
     input logic sda_sim_target_i,
     input logic scl_sim_target_i,
@@ -122,13 +111,8 @@ module i3c_test_wrapper #(
 logic clk_i;
 logic rst_ni;
 
-`ifdef I3C_USE_AHB
-assign clk_i = hclk;
-assign rst_ni = hreset_n;
-`elsif I3C_USE_AXI
-assign clk_i = aclk;
-assign rst_ni = areset_n;
-`endif
+assign clk_i = UseAxi ? aclk : hclk;
+assign rst_ni = UseAxi ? areset_n : hreset_n;
 
 localparam int unsigned NumDevices = 3; // 2 BFMs (Controller, Target), 1 DUT (I3C Core)
 
@@ -183,7 +167,6 @@ i3c_bus_harness #(
     .scl_o     (bus_scl)
 );
 
-`ifdef I3C_USE_AXI
 // AXI4 subordinate interface of the DUT; cocotb drives the discrete
 // AXI pins of this wrapper, so they are wired onto the interface here
 axi_if #(
@@ -192,23 +175,23 @@ axi_if #(
     .UW(AxiUserWidth),
     .IW(AxiIdWidth)
 ) s_axi_if (
-    .clk  (aclk),
-    .rst_n(areset_n)
+    .clk  (clk_i),
+    .rst_n(rst_ni)
 );
 
 // AXI Read Channels
-assign s_axi_if.araddr  = araddr;
-assign s_axi_if.arburst = arburst;
-assign s_axi_if.arsize  = arsize;
-assign s_axi_if.arlen   = arlen;
-assign s_axi_if.aruser  = aruser;
-assign s_axi_if.arid    = arid;
-assign s_axi_if.arlock  = arlock;
-assign s_axi_if.arcache = arcache;
-assign s_axi_if.arprot  = arprot;
-assign s_axi_if.arqos   = arqos;
-assign s_axi_if.arregion = arregion;
-assign s_axi_if.arvalid = arvalid;
+assign s_axi_if.araddr  = UseAxi ? araddr : '0;
+assign s_axi_if.arburst = UseAxi ? arburst : '0;
+assign s_axi_if.arsize  = UseAxi ? arsize : '0;
+assign s_axi_if.arlen   = UseAxi ? arlen : '0;
+assign s_axi_if.aruser  = UseAxi ? aruser : '0;
+assign s_axi_if.arid    = UseAxi ? arid : '0;
+assign s_axi_if.arlock  = UseAxi ? arlock : '0;
+assign s_axi_if.arcache = UseAxi ? arcache : '0;
+assign s_axi_if.arprot  = UseAxi ? arprot : '0;
+assign s_axi_if.arqos   = UseAxi ? arqos : '0;
+assign s_axi_if.arregion = UseAxi ? arregion : '0;
+assign s_axi_if.arvalid = UseAxi ? arvalid : '0;
 assign arready          = s_axi_if.arready;
 
 assign rdata            = s_axi_if.rdata;
@@ -216,62 +199,79 @@ assign rresp            = s_axi_if.rresp;
 assign rid              = s_axi_if.rid;
 assign rlast            = s_axi_if.rlast;
 assign rvalid           = s_axi_if.rvalid;
-assign s_axi_if.rready  = rready;
+assign s_axi_if.rready  = UseAxi ? rready : '0;
 
 // AXI Write Channels
-assign s_axi_if.awaddr  = awaddr;
-assign s_axi_if.awburst = awburst;
-assign s_axi_if.awsize  = awsize;
-assign s_axi_if.awlen   = awlen;
-assign s_axi_if.awuser  = awuser;
-assign s_axi_if.awid    = awid;
-assign s_axi_if.awlock  = awlock;
-assign s_axi_if.awcache = awcache;
-assign s_axi_if.awprot  = awprot;
-assign s_axi_if.awqos   = awqos;
-assign s_axi_if.awregion = awregion;
-assign s_axi_if.awvalid = awvalid;
+assign s_axi_if.awaddr  = UseAxi ? awaddr : '0;
+assign s_axi_if.awburst = UseAxi ? awburst : '0;
+assign s_axi_if.awsize  = UseAxi ? awsize : '0;
+assign s_axi_if.awlen   = UseAxi ? awlen : '0;
+assign s_axi_if.awuser  = UseAxi ? awuser : '0;
+assign s_axi_if.awid    = UseAxi ? awid : '0;
+assign s_axi_if.awlock  = UseAxi ? awlock : '0;
+assign s_axi_if.awcache = UseAxi ? awcache : '0;
+assign s_axi_if.awprot  = UseAxi ? awprot : '0;
+assign s_axi_if.awqos   = UseAxi ? awqos : '0;
+assign s_axi_if.awregion = UseAxi ? awregion : '0;
+assign s_axi_if.awvalid = UseAxi ? awvalid : '0;
 assign awready          = s_axi_if.awready;
 
-assign s_axi_if.wdata   = wdata;
-assign s_axi_if.wstrb   = wstrb;
+assign s_axi_if.wdata   = UseAxi ? wdata : '0;
+assign s_axi_if.wstrb   = UseAxi ? wstrb : '0;
 assign s_axi_if.wuser   = '0;
-assign s_axi_if.wlast   = wlast;
-assign s_axi_if.wvalid  = wvalid;
+assign s_axi_if.wlast   = UseAxi ? wlast : '0;
+assign s_axi_if.wvalid  = UseAxi ? wvalid : '0;
 assign wready           = s_axi_if.wready;
 
 assign bresp            = s_axi_if.bresp;
 assign bid              = s_axi_if.bid;
 assign bvalid           = s_axi_if.bvalid;
-assign s_axi_if.bready  = bready;
-`endif
+assign s_axi_if.bready  = UseAxi ? bready : '0;
 
-i3c_wrapper xi3c_wrapper (
+i3c_wrapper #(
+    .UseAxi(UseAxi),
+    .AhbDataWidth(AhbDataWidth),
+    .AhbAddrWidth(AhbAddrWidth),
+    .AxiDataWidth(AxiDataWidth),
+    .AxiAddrWidth(AxiAddrWidth),
+    .AxiUserWidth(AxiUserWidth),
+    .AxiIdWidth(AxiIdWidth),
+    .EnableIdFiltering(i3c_tb_cfg_pkg::EnableIdFiltering),
+    .NumPrivIds(NumPrivIds),
+    .CmdFifoDepth(i3c_tb_cfg_pkg::CmdFifoDepth),
+    .RespFifoDepth(i3c_tb_cfg_pkg::RespFifoDepth),
+    .RxFifoDepth(i3c_tb_cfg_pkg::RxFifoDepth),
+    .TxFifoDepth(i3c_tb_cfg_pkg::TxFifoDepth),
+    .IbiFifoDepth(i3c_tb_cfg_pkg::IbiFifoDepth),
+    .IbiFifoExtSize(i3c_tb_cfg_pkg::IbiFifoExtSize),
+    .DatDepth(i3c_tb_cfg_pkg::DatDepth),
+    .DctDepth(i3c_tb_cfg_pkg::DctDepth),
+    .DatAw(DatAw),
+    .DctAw(DctAw),
+    .CsrAddrWidth(CsrAddrWidth),
+    .CsrDataWidth(CsrDataWidth),
+    .DisableLoopback(i3c_tb_cfg_pkg::DisableLoopback)
+) xi3c_wrapper (
     .clk_i,
     .rst_ni,
 
-`ifdef I3C_USE_AHB
-    .haddr_i(haddr),
-    .hburst_i(hburst),
-    .hprot_i(hprot),
-    .hsize_i(hsize),
-    .htrans_i(htrans),
-    .hwdata_i(hwdata),
-    .hwstrb_i(hwstrb),
-    .hwrite_i(hwrite),
+    .haddr_i(UseAxi ? '0 : haddr),
+    .hburst_i(UseAxi ? '0 : hburst),
+    .hprot_i(UseAxi ? '0 : hprot),
+    .hsize_i(UseAxi ? '0 : hsize),
+    .htrans_i(UseAxi ? '0 : htrans),
+    .hwdata_i(UseAxi ? '0 : hwdata),
+    .hwstrb_i(UseAxi ? '0 : hwstrb),
+    .hwrite_i(UseAxi ? '0 : hwrite),
     .hrdata_o(hrdata),
     .hreadyout_o(hreadyout),
     .hresp_o(hresp),
-    .hsel_i(hsel),
-    .hready_i(hready),
-`elsif I3C_USE_AXI
+    .hsel_i(UseAxi ? '0 : hsel),
+    .hready_i(UseAxi ? '0 : hready),
     .s_axi_w_if(s_axi_if.w_sub),
     .s_axi_r_if(s_axi_if.r_sub),
-`ifdef AXI_ID_FILTERING
-      .disable_id_filtering_i(disable_id_filtering_i),
+      .disable_id_filtering_i(UseAxi ? disable_id_filtering_i : 1'b1),
       .priv_ids_i(priv_ids_i),
-`endif
-`endif
 
     .scl_i(bus_scl),
     .sda_i(bus_sda),

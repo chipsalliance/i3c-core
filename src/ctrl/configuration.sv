@@ -4,10 +4,10 @@
   This module extracts fields related to addressing from CSRs.
 */
 
-// Required to report legal MWL/MRL/IBIL after reset
-`include "i3c_defines.svh"
-
-module configuration (
+module configuration #(
+    parameter int unsigned RxFifoDepth = 64,
+    parameter int unsigned TxFifoDepth = 64
+) (
     input logic clk_i,
     input logic rst_ni,
 
@@ -159,8 +159,8 @@ module configuration (
 
   always @(posedge clk_i or negedge rst_ni) begin : mrl_mwl
     if (~rst_ni) begin
-      get_mwl_o  <= 16'(`RX_FIFO_DEPTH << 2);
-      get_mrl_o  <= 16'(`TX_FIFO_DEPTH << 2);
+      get_mwl_o  <= 16'(RxFifoDepth << 2);
+      get_mrl_o  <= 16'(TxFifoDepth << 2);
       get_ibil_o <= 8'd16;
     end else begin
       if (set_mwl_i) get_mwl_o <= mwl_i;

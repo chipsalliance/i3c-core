@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+`include "i3c_sva.svh"
+
 //==============================================================================
 // Module: recovery_receiver
 //
@@ -1791,4 +1793,3 @@ module recovery_receiver
   `I3C_ASSERT(RxDescAlignedWithRstart_A, (state_q == RxLenH) && bus_rstart_i |-> rx_desc_wvalid_i)
 
 endmodule
-

@@ -90,8 +90,9 @@ class I3cBusMonitor:
         0x88,  # SETNEWDA (direct)
     }
 
-    def __init__(self, dut, log=None):
+    def __init__(self, dut, clk, log=None):
         self.dut = dut
+        self.clk = clk
         self.log = log or dut._log
         self._running = False
         self._task = None
@@ -179,14 +180,6 @@ class I3cBusMonitor:
             self.i3c_sda_o = self.dut.i3c_sda_o
             self.i3c_sda_oe = self.dut.i3c_sda_oe
             self.i3c_sel_od_pp = self.dut.i3c_sel_od_pp
-
-            # Clock for sampling
-            if hasattr(self.dut, 'aclk'):
-                self.clk = self.dut.aclk
-            elif hasattr(self.dut, 'hclk'):
-                self.clk = self.dut.hclk
-            else:
-                self.clk = None
 
             self._available = True
             self.log.info("I3cBusMonitor: Signals resolved successfully")

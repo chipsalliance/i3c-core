@@ -40,8 +40,9 @@ class TeErrorEventMonitor:
 
     TE_NAMES = {0: "TE0", 1: "TE1", 2: "TE2", 3: "TE3", 4: "TE4", 5: "TE5", 6: "FRAMING"}
 
-    def __init__(self, dut):
+    def __init__(self, dut, clk):
         self.dut = dut
+        self._clk = clk
         self.error_counts = {n: 0 for n in range(7)}  # 0-5 = TE0-TE5, 6 = FRAMING
         self._running = False
         self._prev_te_vals = [0] * 7  # Track previous values for edge detection
@@ -63,14 +64,6 @@ class TeErrorEventMonitor:
                .xcontroller.xcontroller_standby
                .xcontroller_standby_i3c.xi3c_target_fsm)
         self._state_d = fsm.state_d
-
-        # Resolve clock
-        if hasattr(dut, 'aclk'):
-            self._clk = dut.aclk
-        elif hasattr(dut, 'hclk'):
-            self._clk = dut.hclk
-        else:
-            raise AttributeError("TeErrorEventMonitor: no clock signal found (aclk/hclk)")
 
     def expect_error(self, *error_types):
         """Declare which TE error types this test expects to see.
@@ -160,13 +153,6 @@ class HdrRecoveryMonitor:
         self._rx_data_write = tti.rx_data_queue_write_r
         self._rx_desc_write = tti.rx_desc_queue_write_r
 
-        if hasattr(dut, 'aclk'):
-            self._clk = dut.aclk
-        elif hasattr(dut, 'hclk'):
-            self._clk = dut.hclk
-        else:
-            raise AttributeError("HdrRecoveryMonitor: no clock signal found")
-
     async def run(self):
         self._running = True
         while True:
@@ -241,8 +227,9 @@ class PostTe2DataIntegrityMonitor:
     method as a safety net for cases where cocotb swallows the exception.
     """
 
-    def __init__(self, dut):
+    def __init__(self, dut, clk):
         self.dut = dut
+        self._clk = clk
         self._running = False
         self.violation_count = 0
         self._violations = []
@@ -254,13 +241,6 @@ class PostTe2DataIntegrityMonitor:
         fsm = (i3c.xcontroller.xcontroller_standby
                .xcontroller_standby_i3c.xi3c_target_fsm)
         self._state_d = fsm.state_d
-
-        if hasattr(dut, 'aclk'):
-            self._clk = dut.aclk
-        elif hasattr(dut, 'hclk'):
-            self._clk = dut.hclk
-        else:
-            raise AttributeError("PostTe2DataIntegrityMonitor: no clock signal found")
 
     async def run(self):
         self._running = True

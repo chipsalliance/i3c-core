@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: Apache-2.0
-`include "i3c_defines.svh"
 
 module hci_queues_wrapper
   import i3c_pkg::*;
@@ -9,23 +8,18 @@ module hci_queues_wrapper
     localparam int unsigned CsrAddrWidth = I3CCSR_MIN_ADDR_WIDTH,
     localparam int unsigned CsrDataWidth = I3CCSR_DATA_WIDTH,
 
-    parameter int unsigned AxiAddrWidth = `AXI_ADDR_WIDTH,
-    parameter int unsigned AxiDataWidth = `AXI_DATA_WIDTH,
-    parameter int unsigned AxiUserWidth = `AXI_USER_WIDTH,
-    parameter int unsigned AxiIdWidth   = `AXI_ID_WIDTH,
-`ifdef AXI_ID_FILTERING
-    parameter int unsigned NumPrivIds = `NUM_PRIV_IDS,
-`endif
+    parameter int unsigned AxiAddrWidth = i3c_tb_cfg_pkg::AxiAddrWidth,
+    parameter int unsigned AxiDataWidth = i3c_tb_cfg_pkg::AxiDataWidth,
+    parameter int unsigned AxiUserWidth = i3c_tb_cfg_pkg::AxiUserWidth,
+    parameter int unsigned AxiIdWidth   = i3c_tb_cfg_pkg::AxiIdWidth,
+    parameter bit EnableIdFiltering = i3c_tb_cfg_pkg::EnableIdFiltering,
+    parameter int unsigned NumPrivIds = i3c_tb_cfg_pkg::NumPrivIds,
 
-    parameter int unsigned HciRespFifoDepth = `RESP_FIFO_DEPTH,
-    parameter int unsigned HciCmdFifoDepth  = `CMD_FIFO_DEPTH,
-    parameter int unsigned HciRxFifoDepth   = `RX_FIFO_DEPTH,
-    parameter int unsigned HciTxFifoDepth   = `TX_FIFO_DEPTH,
-`ifdef IBI_FIFO_EXT_SIZE
-    parameter int unsigned HciIbiFifoDepth  = 8 * `IBI_FIFO_DEPTH,
-`else
-    parameter int unsigned HciIbiFifoDepth  = `IBI_FIFO_DEPTH,
-`endif
+    parameter int unsigned HciRespFifoDepth = i3c_tb_cfg_pkg::RespFifoDepth,
+    parameter int unsigned HciCmdFifoDepth  = i3c_tb_cfg_pkg::CmdFifoDepth,
+    parameter int unsigned HciRxFifoDepth   = i3c_tb_cfg_pkg::RxFifoDepth,
+    parameter int unsigned HciTxFifoDepth   = i3c_tb_cfg_pkg::TxFifoDepth,
+    parameter int unsigned HciIbiFifoDepth  = i3c_tb_cfg_pkg::IbiFifoDepth * (i3c_tb_cfg_pkg::IbiFifoExtSize ? 8 : 1),
 
     localparam int unsigned HciRespFifoDepthWidth = $clog2(HciRespFifoDepth + 1),
     localparam int unsigned HciCmdFifoDepthWidth = $clog2(HciCmdFifoDepth + 1),
@@ -45,15 +39,11 @@ module hci_queues_wrapper
     parameter int unsigned HciTxThldWidth   = 3,
     parameter int unsigned HciIbiThldWidth  = 8,
 
-    parameter int unsigned TtiRxDescFifoDepth = `RESP_FIFO_DEPTH,
-    parameter int unsigned TtiTxDescFifoDepth  = `CMD_FIFO_DEPTH,
-    parameter int unsigned TtiRxDataFifoDepth   = `RX_FIFO_DEPTH,
-    parameter int unsigned TtiTxDataFifoDepth   = `TX_FIFO_DEPTH,
-`ifdef IBI_FIFO_EXT_SIZE
-    parameter int unsigned TtiIbiFifoDepth  = 8 * `IBI_FIFO_DEPTH,
-`else
-    parameter int unsigned TtiIbiFifoDepth  = `IBI_FIFO_DEPTH,
-`endif
+    parameter int unsigned TtiRxDescFifoDepth = i3c_tb_cfg_pkg::RespFifoDepth,
+    parameter int unsigned TtiTxDescFifoDepth  = i3c_tb_cfg_pkg::CmdFifoDepth,
+    parameter int unsigned TtiRxDataFifoDepth   = i3c_tb_cfg_pkg::RxFifoDepth,
+    parameter int unsigned TtiTxDataFifoDepth   = i3c_tb_cfg_pkg::TxFifoDepth,
+    parameter int unsigned TtiIbiFifoDepth  = i3c_tb_cfg_pkg::IbiFifoDepth * (i3c_tb_cfg_pkg::IbiFifoExtSize ? 8 : 1),
 
     localparam int unsigned TtiRxDescFifoDepthWidth = $clog2(TtiRxDescFifoDepth + 1),
     localparam int unsigned TtiTxDescFifoDepthWidth = $clog2(TtiTxDescFifoDepth + 1),
@@ -125,10 +115,8 @@ module hci_queues_wrapper
     output logic                  bvalid,
     input  logic                  bready,
 
-`ifdef AXI_ID_FILTERING
     input logic disable_id_filtering_i,
     input logic [AxiUserWidth-1:0] priv_ids_i [NumPrivIds],
-`endif
 
     // HCI queues (FSM side)
     // Response queue
@@ -339,7 +327,9 @@ module hci_queues_wrapper
       .AxiDataWidth(AxiDataWidth),
       .AxiAddrWidth(AxiAddrWidth),
       .AxiUserWidth(AxiUserWidth),
-      .AxiIdWidth(AxiIdWidth)
+      .AxiIdWidth(AxiIdWidth),
+      .EnableIdFiltering(EnableIdFiltering),
+      .NumPrivIds(NumPrivIds)
   ) i3c_axi_if (
       .clk_i (aclk),
       .rst_ni(areset_n),
@@ -348,10 +338,8 @@ module hci_queues_wrapper
       .s_axi_w_if(s_axi_if.w_sub),
       .s_axi_r_if(s_axi_if.r_sub),
 
-`ifdef AXI_ID_FILTERING
       .disable_id_filtering_i(disable_id_filtering_i),
       .priv_ids_i(priv_ids_i),
-`endif
 
       .s_cpuif_req(s_cpuif_req),
       .s_cpuif_req_is_wr(s_cpuif_req_is_wr),
@@ -711,7 +699,13 @@ module hci_queues_wrapper
   );
 
   // Recovery handler
-  recovery_handler xrecovery_handler (
+  recovery_handler #(
+      .TtiRxDescFifoDepth(TtiRxDescFifoDepth),
+      .TtiTxDescFifoDepth(TtiTxDescFifoDepth),
+      .TtiRxDataFifoDepth(TtiRxDataFifoDepth),
+      .TtiTxDataFifoDepth(TtiTxDataFifoDepth),
+      .TtiIbiFifoDepth(TtiIbiFifoDepth)
+  ) xrecovery_handler (
       .clk_i (aclk),
       .rst_ni(areset_n),
 

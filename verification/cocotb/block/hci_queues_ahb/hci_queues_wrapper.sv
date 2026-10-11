@@ -8,14 +8,14 @@ module hci_queues_wrapper
     localparam int unsigned CsrAddrWidth = I3CCSR_MIN_ADDR_WIDTH,
     localparam int unsigned CsrDataWidth = I3CCSR_DATA_WIDTH,
 
-    parameter int unsigned AhbAddrWidth = 18,
-    parameter int unsigned AhbDataWidth = 64,
+    parameter int unsigned AhbAddrWidth = i3c_tb_cfg_pkg::AhbAddrWidth,
+    parameter int unsigned AhbDataWidth = i3c_tb_cfg_pkg::AhbDataWidth,
 
-    parameter int unsigned HciRespFifoDepth = 64,
-    parameter int unsigned HciCmdFifoDepth  = 64,
-    parameter int unsigned HciRxFifoDepth   = 64,
-    parameter int unsigned HciTxFifoDepth   = 64,
-    parameter int unsigned HciIbiFifoDepth  = 64,
+    parameter int unsigned HciRespFifoDepth = i3c_tb_cfg_pkg::RespFifoDepth,
+    parameter int unsigned HciCmdFifoDepth  = i3c_tb_cfg_pkg::CmdFifoDepth,
+    parameter int unsigned HciRxFifoDepth   = i3c_tb_cfg_pkg::RxFifoDepth,
+    parameter int unsigned HciTxFifoDepth   = i3c_tb_cfg_pkg::TxFifoDepth,
+    parameter int unsigned HciIbiFifoDepth  = i3c_tb_cfg_pkg::IbiFifoDepth * (i3c_tb_cfg_pkg::IbiFifoExtSize ? 8 : 1),
 
     localparam int unsigned HciRespFifoDepthWidth = $clog2(HciRespFifoDepth + 1),
     localparam int unsigned HciCmdFifoDepthWidth = $clog2(HciCmdFifoDepth + 1),
@@ -35,11 +35,11 @@ module hci_queues_wrapper
     parameter int unsigned HciTxThldWidth   = 3,
     parameter int unsigned HciIbiThldWidth  = 8,
 
-    parameter int unsigned TtiRxDescFifoDepth = 64,
-    parameter int unsigned TtiTxDescFifoDepth = 64,
-    parameter int unsigned TtiRxDataFifoDepth = 64,
-    parameter int unsigned TtiTxDataFifoDepth = 64,
-    parameter int unsigned TtiIbiFifoDepth = 64,
+    parameter int unsigned TtiRxDescFifoDepth = i3c_tb_cfg_pkg::RespFifoDepth,
+    parameter int unsigned TtiTxDescFifoDepth = i3c_tb_cfg_pkg::CmdFifoDepth,
+    parameter int unsigned TtiRxDataFifoDepth = i3c_tb_cfg_pkg::RxFifoDepth,
+    parameter int unsigned TtiTxDataFifoDepth = i3c_tb_cfg_pkg::TxFifoDepth,
+    parameter int unsigned TtiIbiFifoDepth = i3c_tb_cfg_pkg::IbiFifoDepth * (i3c_tb_cfg_pkg::IbiFifoExtSize ? 8 : 1),
 
     localparam int unsigned TtiRxDescFifoDepthWidth = $clog2(TtiRxDescFifoDepth + 1),
     localparam int unsigned TtiTxDescFifoDepthWidth = $clog2(TtiTxDescFifoDepth + 1),
@@ -586,7 +586,13 @@ module hci_queues_wrapper
   );
 
   // Recovery handler
-  recovery_handler xrecovery_handler (
+  recovery_handler #(
+      .TtiRxDescFifoDepth(TtiRxDescFifoDepth),
+      .TtiTxDescFifoDepth(TtiTxDescFifoDepth),
+      .TtiRxDataFifoDepth(TtiRxDataFifoDepth),
+      .TtiTxDataFifoDepth(TtiTxDataFifoDepth),
+      .TtiIbiFifoDepth(TtiIbiFifoDepth)
+  ) xrecovery_handler (
       .clk_i (hclk),
       .rst_ni(hreset_n),
 
@@ -705,7 +711,7 @@ module hci_queues_wrapper
       .ctl_tti_rx_data_queue_start_thld_o(tti_rx_start_thld_o),
       .ctl_tti_rx_data_queue_start_thld_trig_o(tti_rx_start_thld_trig_o),
       .ctl_tti_rx_data_queue_ready_thld_o(tti_rx_ready_thld_o),
-      .ctl_tti_rx_data_queue_ready_thld_trig_o(tti_rx_ready_thld_trig_o),
+      .ctl_tti_rx_data_queue_ready_thld_trig_o(),
 
       // TTI TX data queue
       .ctl_tti_tx_data_queue_full_o(tti_tx_full_o),

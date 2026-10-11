@@ -4,6 +4,8 @@ module controller_active
   import controller_pkg::*;
   import i3c_pkg::*;
 #(
+    parameter int unsigned DatAw = i3c_pkg::DatAw,
+    parameter int unsigned DctAw = i3c_pkg::DctAw,
     parameter int unsigned HciRespFifoDepth = 64,
     parameter int unsigned HciCmdFifoDepth  = 64,
     parameter int unsigned HciRxFifoDepth   = 64,
@@ -91,13 +93,13 @@ module controller_active
 
     // DAT <-> Controller interface
     output logic                          dat_read_valid_hw_o,
-    output logic [$clog2(`DAT_DEPTH)-1:0] dat_index_hw_o,
+    output logic [DatAw-1:0] dat_index_hw_o,
     input  logic [                  63:0] dat_rdata_hw_i,
 
     // DCT <-> Controller interface
     output logic                          dct_write_valid_hw_o,
     output logic                          dct_read_valid_hw_o,
-    output logic [$clog2(`DCT_DEPTH)-1:0] dct_index_hw_o,
+    output logic [DctAw-1:0] dct_index_hw_o,
     output logic [                 127:0] dct_wdata_hw_o,
     input  logic [                 127:0] dct_rdata_hw_i,
 
@@ -140,7 +142,10 @@ module controller_active
 
   // FUTUREFIX: Connect I2C Controller SDA/SCL to I3C Flow FSM
 
-  flow_active flow_fsm (
+  flow_active #(
+      .DatAw(DatAw),
+      .DctAw(DctAw)
+  ) flow_fsm (
       .clk_i,
       .rst_ni,
       .cmd_queue_full_i,

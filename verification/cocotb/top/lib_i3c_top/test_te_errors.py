@@ -236,7 +236,7 @@ async def recover_from_hdr_error(i3c_controller, i3c_target, tb, recovery_method
         i3c_controller.give_bus_control()
 
 
-async def inject_te0_error(i3c_controller, dut, addr_pattern=None):
+async def inject_te0_error(i3c_controller, clk, addr_pattern=None):
     """Inject a TE0 error. If addr_pattern is None, use send_te0_error (0x7E/R).
     Otherwise use the specified reserved address with W bit."""
     if addr_pattern is None or addr_pattern == TE0_RSVD_ADDR_R:
@@ -246,7 +246,7 @@ async def inject_te0_error(i3c_controller, dut, addr_pattern=None):
         await i3c_controller.take_bus_control()
         await i3c_controller.send_start()
         await i3c_controller.write_addr_header(addr_pattern, read=False)
-    await ClockCycles(dut.aclk if hasattr(dut, 'aclk') else dut.hclk, 10)
+    await ClockCycles(clk, 10)
 
 
 # =============================================================================
@@ -289,7 +289,7 @@ async def test_te0_errors(dut):
         log.info(f"  Iteration {i}: addr=0x{addr_pattern:02X}, recovery={recovery}")
 
         cnt_before = await read_te_counter(tb, 0)
-        await inject_te0_error(i3c_controller, dut, addr_pattern)
+        await inject_te0_error(i3c_controller, tb.clk, addr_pattern)
         assert_fsm_in_hdr_mode(dut)
 
         await recover_from_hdr_error(i3c_controller, i3c_target, tb, recovery)
@@ -313,7 +313,7 @@ async def test_te0_errors(dut):
     b2b_count = random.randint(2, 3)
     for j in range(b2b_count):
         addr_pattern = random.choice(TE0_RSVD_ADDR_W + [TE0_RSVD_ADDR_R])
-        await inject_te0_error(i3c_controller, dut, addr_pattern)
+        await inject_te0_error(i3c_controller, tb.clk, addr_pattern)
         # Release bus but don't do HDR exit -- target stays in HDR error mode
         await i3c_controller.send_stop()
         i3c_controller.give_bus_control()
@@ -343,7 +343,7 @@ async def test_te0_errors(dut):
     cnt_before = await read_te_counter(tb, 0)
     await clear_all_te_status(tb)
 
-    await inject_te0_error(i3c_controller, dut)
+    await inject_te0_error(i3c_controller, tb.clk)
     # Target should NOT go deaf -- but the BFM already sent 0x7E/R which
     # enters HDR mode regardless of DET_EN (DET_EN only controls error reporting).
     # We still need to recover from HDR mode.
@@ -966,7 +966,7 @@ async def test_te_error_sequence_mixing(dut):
 
         if err_type == 'te0':
             addr_pattern = random.choice(TE0_RSVD_ADDR_W + [TE0_RSVD_ADDR_R])
-            await inject_te0_error(i3c_controller, dut, addr_pattern)
+            await inject_te0_error(i3c_controller, tb.clk, addr_pattern)
             recovery = random.choice(['hdr_exit', 'timeout'])
             await recover_from_hdr_error(i3c_controller, i3c_target, tb, recovery)
             await ClockCycles(tb.clk, 10)
@@ -1055,7 +1055,7 @@ async def test_te_error_ri_isolation(dut):
 
     # --- PHASE 1: TE0 error -> verify TTI traffic recovers ---
     log.info("=== PHASE 1: TE0 -> TTI recovery ===")
-    await inject_te0_error(i3c_controller, dut)
+    await inject_te0_error(i3c_controller, tb.clk)
     assert_fsm_in_hdr_mode(dut)
     await recover_from_hdr_error(i3c_controller, i3c_target, tb, 'hdr_exit')
     await ClockCycles(tb.clk, 10)
@@ -1159,7 +1159,7 @@ async def test_te_counter_per_event(dut):
 
     # Inject exactly one TE0 error (0x7E/R reserved address)
     hdr_entries_before = tb.hdr_recovery_monitor.entry_count
-    await inject_te0_error(i3c_controller, dut, TE0_RSVD_ADDR_R)
+    await inject_te0_error(i3c_controller, tb.clk, TE0_RSVD_ADDR_R)
     assert tb.hdr_recovery_monitor.entry_count > hdr_entries_before, \
         "TE0 error should have triggered HDR error mode entry"
     await recover_from_hdr_error(i3c_controller, i3c_target, tb, 'hdr_exit')
