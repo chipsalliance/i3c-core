@@ -79,14 +79,17 @@ virtual target address. Device Firmware accesses CSRs over the AXI bus.
   |    FW reads)               |         |                        |
   `----------------------------'         |                        |
         |                                |                        |
+        |  I3C Read INDIRECT_FIFO_STATUS |                        |
+        |  Poll until EMPTY == 1         |                        |
+        |                                |                        |
         |  I3C Write INDIRECT_FIFO ----->|  INDIRECT_FIFO         |
         |  _DATA (chunk + PEC)           |        |               |
         |                                |        `-----> Read by |
         |                                |           Device FW    |
         |                                |                        |
-        |  I3C NACKs when FIFO full      |  DMA triggered by      |
-        |  (flow control via NACK)       |  payload_available_o   |
-        |                                |  (reads FIFO_SIZE or   |
+        |  No NACK when FIFO is full;    |  DMA triggered by      |
+        |  data beyond capacity is       |  payload_available_o   |
+        |  discarded                     |  (reads FIFO_SIZE or   |
         |                                |  remaining bytes)      |
         |                                |                        |
         |    ... repeat until all data transferred ...            |
@@ -147,7 +150,7 @@ The only differences are on the data provider (Initiator / Image Provider) side:
 | Data path | I3C bus to virtual target | AXI bus direct to FIFO |
 | Initiator | External BMC/Controller | Internal Image Provider |
 | PEC checksum | Required on every I3C transfer | Not used |
-| FIFO full handling | I3C core NACKs the write | Image Provider polls FIFO status |
+| FIFO full handling | Initiator polls `INDIRECT_FIFO_STATUS.EMPTY` (no NACK) | Image Provider polls FIFO status |
 | CSR access | I3C private write/read commands | Direct AXI register access |
 | Activation | Initiator writes RECOVERY_CTRL directly | Image Provider writes via W1C register |
 | `REC_PAYLOAD_DONE` | Not used (HW manages `payload_available_o`) | Image Provider sets/clears to signal last chunk |
@@ -163,6 +166,27 @@ the next stage (step 17 in the AXI bypass flow). Without this wait,
 Device Firmware may read stale `IMAGE_SIZE` from the prior stage and
 set up DMA transfers with the wrong byte count.
 ```
+
+### Data Transfer Constraints
+
+- The I3C core does not NACK an `INDIRECT_FIFO_DATA` write when the
+  Indirect FIFO is full. The only ACK/NACK opportunity is the address
+  phase, before the target knows the write is for the FIFO.
+- The Recovery Initiator must read `INDIRECT_FIFO_STATUS` and wait until
+  `EMPTY` (byte 0, bit 0) is set before writing the next chunk.
+- Maximum chunk size per FIFO write is defined by `INDIRECT_FIFO_STATUS`
+  `MAX_TRANSFER_SIZE`.
+- If the Initiator writes to a full FIFO, the write is still ACKed and
+  data beyond FIFO capacity is discarded:
+  - When `RI_INDIRECT_FIFO_OVERFLOW_ERR_DET_EN` is set (reset default),
+    the handler stops at the first word that does not fit, discards the
+    rest of the chunk, reports a Length error in
+    `DEVICE_STATUS.PROTOCOL_ERROR`, and sets
+    `RI_INDIRECT_FIFO_OVERFLOW_ERR_STAT`.
+  - When it is cleared, no error is reported. Each word that arrives
+    while the FIFO is full is dropped, and later words in the same chunk
+    are still written if Device Firmware frees space, silently
+    corrupting the image.
 
 ### Register Reference
 
