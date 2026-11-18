@@ -8650,3 +8650,157 @@ async def test_recovery_ri_csr_concurrent_stress(dut):
         )
 
     await tb.teardown()
+
+@cocotb.test()
+async def test_recovery_private_write_no_rsvd(dut):
+    """
+    Verify that Recovery Interface commands work correctly when the
+    initial Private Write does NOT include an RSVD byte.
+    """
+    import crc
+
+    # Initialize
+    i3c_controller, i3c_target, tb, recovery = await initialize(dut, timeout=500)
+
+    # Set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
+    # Enter recovery mode
+    dut._log.info("Entering recovery mode (DEVICE_STATUS = 0x03)")
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr,
+        int2dword(0x03),
+        4
+    )
+
+    pec_calc = crc.Calculator(I3cRecoveryInterface.CRC_CONFIG, optimized=True)
+
+    # =========================================================================
+    # Test 1: RI Write without RSVD byte
+    # =========================================================================
+    dut._log.info("Testing RI write without RSVD byte")
+    command = I3cRecoveryInterface.Command.RECOVERY_CTRL
+    data = [0x11, 0x22, 0x33]
+
+    xfer = [command, len(data) & 0xFF, (len(data) >> 8) & 0xFF] + data
+    pec = int(pec_calc.checksum(bytes([VIRT_DYNAMIC_ADDR << 1] + xfer)))
+    xfer.append(pec)
+
+    # Send raw I3C write with send_rsvd=False
+    await i3c_controller.i3c_write(VIRT_DYNAMIC_ADDR, xfer, stop=True, send_rsvd=False)
+    await ClockCycles(tb.clk, 50)
+
+    # Check DEVICE_STATUS for protocol error
+    status = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr, 4)
+    )
+    protocol_error = (status >> 8) & 0xFF
+    assert protocol_error == 0, f"Expected 0 protocol error, got 0x{protocol_error:02X}"
+
+    # Verify CSR
+    recovery_ctrl = dword2int(
+        await tb.read_csr(tb.reg_map.I3C_EC.SECFWRECOVERYIF.RECOVERY_CTRL.base_addr, 4)
+    )
+    expected = (data[2] << 16) | (data[1] << 8) | data[0]
+    assert recovery_ctrl == expected, f"Expected 0x{expected:06X}, got 0x{recovery_ctrl:08X}"
+    dut._log.info("RI Write without RSVD successful.")
+
+    # =========================================================================
+    # Test 2: RI Read without RSVD byte on the command phase
+    # =========================================================================
+    dut._log.info("Testing RI read without RSVD byte")
+    command = I3cRecoveryInterface.Command.PROT_CAP
+    xfer = [command]
+    pec = int(pec_calc.checksum(bytes([VIRT_DYNAMIC_ADDR << 1] + xfer)))
+    xfer.append(pec)
+
+    # Command phase (Write without STOP, no RSVD)
+    await i3c_controller.i3c_write(VIRT_DYNAMIC_ADDR, xfer, stop=False, send_rsvd=False)
+
+    # Read phase (15 bytes data + 2 bytes len + 1 byte PEC = 18 bytes)
+    readback = await i3c_controller.i3c_read(VIRT_DYNAMIC_ADDR, 18, send_rsvd=False)
+
+    assert not readback.nack, "Read phase was NACKed!"
+
+    # Verify readback data
+    rx_data = list(readback.data)
+    assert len(rx_data) == 18, f"Expected 18 bytes, got {len(rx_data)}"
+
+    len_l = rx_data[0]
+    len_h = rx_data[1]
+    assert len_l == 15 and len_h == 0, "Length bytes should be 15, 0"
+
+    rx_pec = rx_data[17]
+
+    # Verify PEC
+    expected_pec = int(pec_calc.checksum(bytes([(VIRT_DYNAMIC_ADDR << 1) | 1] + rx_data[:17])))
+    assert rx_pec == expected_pec, f"PEC mismatch: expected 0x{expected_pec:02X}, got 0x{rx_pec:02X}"
+
+    dut._log.info("RI Read without RSVD successful.")
+
+    await tb.teardown()
+
+
+@cocotb.test()
+async def test_recovery_private_read_no_rsvd(dut):
+    """
+    Verify that Recovery Interface commands work correctly when the
+    Private Read does NOT include an RSVD byte.
+    """
+    import crc
+
+    # Initialize
+    i3c_controller, _, tb, recovery = await initialize(dut, timeout=500)
+
+    # Set virtual device dynamic address
+    await i3c_controller.i3c_ccc_write(
+        ccc=CCC.DIRECT.SETDASA, directed_data=[(VIRT_STATIC_ADDR, [VIRT_DYNAMIC_ADDR << 1])]
+    )
+
+    # Enter recovery mode
+    dut._log.info("Entering recovery mode (DEVICE_STATUS = 0x03)")
+    await tb.write_csr(
+        tb.reg_map.I3C_EC.SECFWRECOVERYIF.DEVICE_STATUS_0.base_addr,
+        int2dword(0x03),
+        4
+    )
+
+    pec_calc = crc.Calculator(I3cRecoveryInterface.CRC_CONFIG, optimized=True)
+
+    # =========================================================================
+    # Test: RI Read without RSVD byte on the read phase
+    # =========================================================================
+    dut._log.info("Testing RI read without RSVD byte on the read phase")
+    command = I3cRecoveryInterface.Command.PROT_CAP
+    xfer = [command]
+    pec = int(pec_calc.checksum(bytes([VIRT_DYNAMIC_ADDR << 1] + xfer)))
+    xfer.append(pec)
+
+    # Command phase (Write without STOP, WITH RSVD to isolate the read phase behavior)
+    await i3c_controller.i3c_write(VIRT_DYNAMIC_ADDR, xfer, stop=False, send_rsvd=True)
+
+    # Read phase (15 bytes data + 2 bytes len + 1 byte PEC = 18 bytes)
+    # send_rsvd=False tests the specific condition requested
+    readback = await i3c_controller.i3c_read(VIRT_DYNAMIC_ADDR, 18, send_rsvd=False)
+
+    assert not readback.nack, "Read phase was NACKed!"
+
+    # Verify readback data
+    rx_data = list(readback.data)
+    assert len(rx_data) == 18, f"Expected 18 bytes, got {len(rx_data)}"
+
+    len_l = rx_data[0]
+    len_h = rx_data[1]
+    assert len_l == 15 and len_h == 0, "Length bytes should be 15, 0"
+
+    rx_pec = rx_data[17]
+
+    # Verify PEC
+    expected_pec = int(pec_calc.checksum(bytes([(VIRT_DYNAMIC_ADDR << 1) | 1] + rx_data[:17])))
+    assert rx_pec == expected_pec, f"PEC mismatch: expected 0x{expected_pec:02X}, got 0x{rx_pec:02X}"
+
+    dut._log.info("RI Read without RSVD on read phase successful.")
+
+    await tb.teardown()
