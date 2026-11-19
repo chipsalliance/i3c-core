@@ -111,7 +111,7 @@ module i3c_test_wrapper #(
 logic clk_i;
 logic rst_ni;
 
-assign clk_i = UseAxi ? aclk : hclk;
+assign clk_i = UseAxi ? aclk : ~hclk;
 assign rst_ni = UseAxi ? areset_n : hreset_n;
 
 localparam int unsigned NumDevices = 3; // 2 BFMs (Controller, Target), 1 DUT (I3C Core)

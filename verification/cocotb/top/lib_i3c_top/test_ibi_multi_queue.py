@@ -567,7 +567,7 @@ async def test_ibi_multi_queue_flush_large_payload(dut):
         # Now force it to max to hit `data_cnt_q[7:2] == '1`
         desc_ibi.data_cnt_q.value = Force(252)
         desc_ibi.data_len.value = Force(255)
-        await ClockCycles(tb.clk, 1)
+        await ClockCycles(tb.clk, 10)
 
         # Release
         desc_ibi.data_cnt_q.value = Release()
